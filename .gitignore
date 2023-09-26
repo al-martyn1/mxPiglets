@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+/tests/_prj_msvc/*.user
