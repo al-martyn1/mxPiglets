@@ -30,6 +30,7 @@ git clone %PREFIX%/marty_cpp.git               %~dp0\marty_cpp
 git clone %PREFIX%/marty_decimal.git           %~dp0\marty_decimal
 git clone %PREFIX%/marty_dc_impl_win32.git     %~dp0\marty_dc_impl_win32
 git clone %PREFIX%/marty_draw_context.git      %~dp0\marty_draw_context
+git clone %PREFIX%/marty_vk.git                %~dp0\marty_vk
 git clone %PREFIX%/marty_fs_adapters.git       %~dp0\marty_fs_adapters
 git clone %PREFIX%/umba_mm_mod_sfmt.git        %~dp0\sfmt
 git clone %PREFIX%/umba_mm_mod_umba.git        %~dp0\umba
