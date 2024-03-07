@@ -11,12 +11,13 @@
 #include "umba/simple_formatter.h"
 #include "umba/time_service.h"
 
-
+//
 #include "marty_dc_impl_win32/gdi_draw_context.h"
 #include "marty_dc_impl_win32/gdiplus_draw_context.h"
-
+//
 #include <array>
-
+//
+#include "mxPiglets/impl/win32/host_window_impl.h"
 
 
 #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG(nFlags) (((nFlags)>>(30-16))&0x01)
@@ -48,8 +49,11 @@ typedef marty_draw_context::GdiPlusDrawContext                GdiPlusDrawContext
 
 
 
-class CBitmapView : public CScrollWindowImpl<CBitmapView>
+class CBitmapView : public mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapView> >
+// public CScrollWindowImpl<CBitmapView>
 {
+
+    typedef mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapView> >   HostWindowImplParent;
 public:
     DECLARE_WND_CLASS_EX(NULL, 0, -1)
 
@@ -59,6 +63,12 @@ public:
     CBitmapView()
     {
     }
+
+    CBitmapView(const CBitmapView&) : HostWindowImplParent() // = delete;
+    {
+    
+    }
+
 
     BOOL PreTranslateMessage(MSG* pMsg)
     {

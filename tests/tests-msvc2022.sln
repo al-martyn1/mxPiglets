@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_all", "_prj_msvc2019\_all.vcxproj", "{D66975DB-7E59-4BE8-AD8D-C13E9B858F44}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_all", "_prj_msvc2022\_all.vcxproj", "{D66975DB-7E59-4BE8-AD8D-C13E9B858F44}"
 	ProjectSection(ProjectDependencies) = postProject
 		{06B44D41-64A7-4F7C-82B2-6E23A3204305} = {06B44D41-64A7-4F7C-82B2-6E23A3204305}
 		{54A77677-01AE-4869-83ED-7D9BFD52F9EB} = {54A77677-01AE-4869-83ED-7D9BFD52F9EB}
@@ -11,13 +11,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_all", "_prj_msvc2019\_all.
 		{001634AE-5567-412E-ACEC-6EC488026C66} = {001634AE-5567-412E-ACEC-6EC488026C66}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest01_GdiOnly", "_prj_msvc2019\mxTest01_GdiOnly.vcxproj", "{001634AE-5567-412E-ACEC-6EC488026C66}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest01_GdiOnly", "_prj_msvc2022\mxTest01_GdiOnly.vcxproj", "{001634AE-5567-412E-ACEC-6EC488026C66}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest01_GdiPlus", "_prj_msvc2019\mxTest01_GdiPlus.vcxproj", "{54A77677-01AE-4869-83ED-7D9BFD52F9EB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest01_GdiPlus", "_prj_msvc2022\mxTest01_GdiPlus.vcxproj", "{54A77677-01AE-4869-83ED-7D9BFD52F9EB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest02_GdiOnly", "_prj_msvc2019\mxTest02_GdiOnly.vcxproj", "{06B44D41-64A7-4F7C-82B2-6E23A3204305}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest02_GdiOnly", "_prj_msvc2022\mxTest02_GdiOnly.vcxproj", "{06B44D41-64A7-4F7C-82B2-6E23A3204305}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest02_GdiPlus", "_prj_msvc2019\mxTest02_GdiPlus.vcxproj", "{63B287A7-CEE3-4186-A65D-4E60A39BEFE7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mxTest02_GdiPlus", "_prj_msvc2022\mxTest02_GdiPlus.vcxproj", "{63B287A7-CEE3-4186-A65D-4E60A39BEFE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

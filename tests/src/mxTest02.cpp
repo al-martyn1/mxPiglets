@@ -2,7 +2,7 @@
     \brief Общий тест основных методов IDrawContext
 */
 
-#define TESTMXPIGLETS 1
+#define TESTMXPIGLETS 2
 
 #include "mxTestCommon.cpp"
 

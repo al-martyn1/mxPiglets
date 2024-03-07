@@ -1,32 +1,32 @@
-#if !defined(TESTWINDRAWCONTEXT)
+#if !defined(TESTMXPIGLETS)
 
-    #error "TESTWINDRAWCONTEXT not defined"
+    #error "TESTMXPIGLETS not defined"
 
 #else
 
-    #if TESTWINDRAWCONTEXT==1
+    #if TESTMXPIGLETS==1
         #include "view_001.h"
-    #elif TESTWINDRAWCONTEXT==2
+    #elif TESTMXPIGLETS==2
         #include "view_002.h"
-    #elif TESTWINDRAWCONTEXT==3
+    #elif TESTMXPIGLETS==3
         #include "view_003.h"
-    #elif TESTWINDRAWCONTEXT==4
+    #elif TESTMXPIGLETS==4
         #include "view_004.h"
-    #elif TESTWINDRAWCONTEXT==5
+    #elif TESTMXPIGLETS==5
         #include "view_005.h"
-    #elif TESTWINDRAWCONTEXT==6
+    #elif TESTMXPIGLETS==6
         #include "view_006.h"
-    #elif TESTWINDRAWCONTEXT==7
+    #elif TESTMXPIGLETS==7
         #include "view_007.h"
-    #elif TESTWINDRAWCONTEXT==8
+    #elif TESTMXPIGLETS==8
         #include "view_008.h"
-    #elif TESTWINDRAWCONTEXT==9
+    #elif TESTMXPIGLETS==9
         #include "view_009.h"
-    #elif TESTWINDRAWCONTEXT==10
+    #elif TESTMXPIGLETS==10
         #include "view_010.h"
-    #elif TESTWINDRAWCONTEXT==11
+    #elif TESTMXPIGLETS==11
         #include "view_011.h"
-    #elif TESTWINDRAWCONTEXT==12
+    #elif TESTMXPIGLETS==12
         #include "view_012.h"
     #endif
 
