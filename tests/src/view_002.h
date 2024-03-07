@@ -54,6 +54,10 @@ class CBitmapView : public mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapV
 {
 
     typedef mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapView> >   HostWindowImplParent;
+
+    mxPiglets::WindowTimer timer1;
+    mxPiglets::WindowTimer timer2;
+
 public:
     DECLARE_WND_CLASS_EX(NULL, 0, -1)
 
@@ -67,6 +71,35 @@ public:
     CBitmapView(const CBitmapView&) : HostWindowImplParent() // = delete;
     {
     
+    }
+
+    virtual void onWindowCreate() override
+    {
+        using umba::lout;
+        using namespace umba::omanip;
+
+
+        timer1 = createTimer(100);
+        timer2 = createTimer(200);
+
+        if (timer1==timer1)
+        {
+            lout << "timer1==timer1\n";
+        }
+        else
+        {
+            lout << "timer1!=timer1\n";
+        }
+
+        if (timer1==timer2)
+        {
+            lout << "timer1==timer2\n";
+        }
+        else
+        {
+            lout << "timer1!=timer2\n";
+        }
+        
     }
 
 
@@ -83,7 +116,8 @@ public:
 
     BEGIN_MSG_MAP(CBitmapView)
         MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
-        CHAIN_MSG_MAP(CScrollWindowImpl<CBitmapView>);
+        //CHAIN_MSG_MAP(CScrollWindowImpl<CBitmapView>);
+        CHAIN_MSG_MAP(HostWindowImplParent);
     END_MSG_MAP()
 
     void toggleFullScreen()

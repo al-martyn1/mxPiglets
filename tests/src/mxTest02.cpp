@@ -7,6 +7,9 @@
 #include "mxTestCommon.cpp"
 
 
+#include <memory>
+
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
     return mainImpl(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
