@@ -3,6 +3,10 @@
 #include "i_window_timer.h"
 #include "comparable.h"
 #include "checked_pimpl.h"
+#include "defs.h"
+
+
+
 
 namespace mxPiglets {
 
@@ -19,6 +23,8 @@ struct WindowTimer : public Comparable<WindowTimer>
 
     explicit WindowTimer(std::shared_ptr<IWindowTimer> pimpl) : m_pImpl(pimpl) {}
 
+    // MX_PIGLETS_IMPLEMENT_CLASS_COPY_OPS_DEFAULT(WindowTimer);
+    // MX_PIGLETS_IMPLEMENT_CLASS_MOVE_OPS_DEFAULT(WindowTimer);
 
     bool restart(timeout_t timeoutMs)
     {

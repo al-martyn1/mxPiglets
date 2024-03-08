@@ -64,9 +64,15 @@ struct IHostWindow : public NonCopyableObject
     virtual void onWindowClose() = 0;
     virtual void onWindowDestroy() = 0;
 
+    virtual void onTimerEvent(const WindowTimer timer) = 0;
 
-    virtual WindowTimer createTimer(timeout_t timeoutMs) const = 0;
-    virtual WindowTimer createStopped(timeout_t timeoutMs=0) const = 0;
+    virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
+
+    virtual Cursor createStockCursor(EStockCursor cursorKind) const = 0;
+    virtual Cursor setCursor(Cursor cursor) = 0;
+    virtual Cursor setCursor(EStockCursor cursorKind) = 0;
+    virtual bool showCursor(bool bShow) = 0;
+
 
     //virtual bool stopTimer(WindowTimer t) = 0;
     //virtual bool removeTimer(WindowTimer t) = 0;

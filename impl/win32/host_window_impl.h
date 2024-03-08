@@ -16,9 +16,14 @@
 #include <memory>
 
 //
-#include "mxPiglets/i_host_window.h"
+#include "../../i_host_window.h"
+#include "../../checked_pimpl.h"
+#include "../../cursor.h"
+//
 #include "window_timer_impl.h"
-#include "mxPiglets/checked_pimpl.h"
+#include "cursor_handles_holder.h"
+#include "cursor_impl.h"
+
 
 namespace mxPiglets {
 
@@ -33,6 +38,12 @@ class HostWindowImpl : public TParent
 {
 
     mutable UINT_PTR    curTimerId  = 1; // Переделать на атомики
+
+    // Чтобы постоянно думми не создавать, создадим заранее всё, что нужно, в OnCreate, а в OnTimer просто будем менять идентификатор таймера
+    mutable std::shared_ptr<WindowTimerImpl>  pWindowTimerImplForOnTimer;
+    mutable std::shared_ptr<IWindowTimer>     pIWindowTimerForOnTimer;
+    
+
 
 public:
 
@@ -108,6 +119,15 @@ public:
         MARTY_ARG_USED(lpCreateStruct);
         setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
 
+        pWindowTimerImplForOnTimer = std::make_shared<WindowTimerImpl>(getHwnd(), 0, 0, false);
+        pIWindowTimerForOnTimer    = std::static_pointer_cast<IWindowTimer>(pWindowTimerImplForOnTimer);
+
+    // mutable std::shared_ptr<WindowTimerImpl>  pWindowTimerImplForOnTimer;
+    // mutable std::shared_ptr<IWindowTimer>     pIWindowTimerForOnTimer;
+
+        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, bRunning);
+        // return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
+
         onWindowCreate();
 
         return 0;
@@ -140,9 +160,8 @@ public:
 
     void OnTimer(UINT_PTR nIDEvent)
     {
-        MARTY_ARG_USED(nIDEvent);
-        //::KillTimer(m_hWnd, updateTimerId);
-
+        pWindowTimerImplForOnTimer->idTimerEvent = nIDEvent;
+        onTimerEvent(WindowTimer(pIWindowTimerForOnTimer));
     }
 
     void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -194,19 +213,55 @@ public:
         PostQuitMessage(0);
     }
 
-
-    virtual WindowTimer createTimer(timeout_t timeoutMs) const override
+    virtual void onTimerEvent(const WindowTimer timer) override
     {
-        //auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, true);
-        auto pSharedImpl = std::make_shared<WindowTimerImpl>(WindowTimerImpl::create(getHwnd(), curTimerId++, timeoutMs));
+        MARTY_ARG_USED(timer);
+    }
+
+
+    virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const override
+    {
+        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(WindowTimerImpl::create(getHwnd(), curTimerId++, timeoutMs, bRunning)); // Not working
+        auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, bRunning);
         return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
     }
 
-    virtual WindowTimer createStopped(timeout_t timeoutMs=0) const override
+    virtual Cursor createStockCursor(EStockCursor cursorKind) const override
     {
-        auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, false);
-        return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
+        auto &cursorsHolder = getCursorHandlesHolder();
+        auto pSharedImpl = std::make_shared<CursorImpl>(cursorKind, &cursorsHolder);
+        return Cursor(std::static_pointer_cast<ICursor>(pSharedImpl));
     }
+
+    virtual Cursor setCursor(Cursor cursor) override
+    {
+        if (!cursor.isValid())
+        {
+            return setCursor(EStockCursor::normal);
+        }
+
+        auto pCursorImpl = cursor.getCheckedCastedRawPtr<CursorImpl>("HostWindow::setCursor");
+
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursor
+        HCURSOR hPrevCursor = ::SetCursor(pCursorImpl->hCursor);
+
+        auto &cursorsHolder = getCursorHandlesHolder();
+        auto pSharedImpl = std::make_shared<CursorImpl>(hPrevCursor, &cursorsHolder);
+        return Cursor(std::static_pointer_cast<ICursor>(pSharedImpl));
+    }
+
+    virtual Cursor setCursor(EStockCursor cursorKind) override
+    {
+        return setCursor(createStockCursor(cursorKind));
+    }
+
+    virtual bool showCursor(bool bShow) override
+    {
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showcursor
+        int showCounter = ::ShowCursor(bShow?TRUE:FALSE);
+        return showCounter>=0;
+    }
+
 
     //virtual bool stopTimer(WindowTimer t) override
     //virtual bool removeTimer(WindowTimer t) override

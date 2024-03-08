@@ -10,11 +10,11 @@ class Comparable //: public IComparable
 
 public:
 
-    bool isNull() const
-    {
-        auto pThisParent  = static_cast<const T*>(this);
-        return !pThisParent->m_pImpl ? true : false;
-    }
+    // bool isNull() const
+    // {
+    //     auto pThisParent  = static_cast<const T*>(this);
+    //     return !pThisParent->m_pImpl ? true : false;
+    // }
 
     int compare(const Comparable &other) const
     {

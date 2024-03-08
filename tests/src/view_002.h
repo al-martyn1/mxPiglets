@@ -53,10 +53,14 @@ class CBitmapView : public mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapV
 // public CScrollWindowImpl<CBitmapView>
 {
 
-    typedef mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapView> >   HostWindowImplParent;
+    typedef mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapView> >   HostWindowImplBase;
 
     mxPiglets::WindowTimer timer1;
     mxPiglets::WindowTimer timer2;
+    mxPiglets::WindowTimer timerCursorChange;
+
+    mxPiglets::EStockCursor  curStockCursor = mxPiglets::EStockCursor::normal;
+    mxPiglets::Cursor        defaultCursor;
 
 public:
     DECLARE_WND_CLASS_EX(NULL, 0, -1)
@@ -68,7 +72,7 @@ public:
     {
     }
 
-    CBitmapView(const CBitmapView&) : HostWindowImplParent() // = delete;
+    CBitmapView(const CBitmapView&) : HostWindowImplBase() // = delete;
     {
     
     }
@@ -81,6 +85,7 @@ public:
 
         timer1 = createTimer(100);
         timer2 = createTimer(200);
+        timerCursorChange = createTimer(1000);
 
         if (timer1==timer1)
         {
@@ -102,6 +107,39 @@ public:
         
     }
 
+    virtual void onWindowClose() override
+    {
+        setCursor(defaultCursor);
+        HostWindowImplBase::onWindowClose();
+    }
+    
+
+    virtual void onTimerEvent(const mxPiglets::WindowTimer timer) override
+    {
+        if (timer==timerCursorChange)
+        {
+            const std::uint32_t end    = (std::uint32_t)mxPiglets::EStockCursor::end;
+            std::uint32_t curCursorU32 = (std::uint32_t)curStockCursor;
+            ++curCursorU32;
+            if (curCursorU32>=end)
+            {
+                curStockCursor = mxPiglets::EStockCursor::normal;
+            }
+            else
+            {
+                curStockCursor = (mxPiglets::EStockCursor)curCursorU32;
+            }
+
+            auto prevCursor = setCursor(createStockCursor(curStockCursor));
+            if (!defaultCursor.isValid())
+            {
+                defaultCursor = prevCursor;
+            }
+
+            //mxPiglets::EStockCursor  curStockCursor = mxPiglets::EStockCursor::normal;
+        }
+    }
+
 
     BOOL PreTranslateMessage(MSG* pMsg)
     {
@@ -117,7 +155,7 @@ public:
     BEGIN_MSG_MAP(CBitmapView)
         MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
         //CHAIN_MSG_MAP(CScrollWindowImpl<CBitmapView>);
-        CHAIN_MSG_MAP(HostWindowImplParent);
+        CHAIN_MSG_MAP(HostWindowImplBase);
     END_MSG_MAP()
 
     void toggleFullScreen()

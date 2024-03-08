@@ -61,7 +61,7 @@
 
 @set STOCKCURSOR_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,fmt-hex %VALUES_CAMEL% 
 @rem %SERIALIZE_PASCAL%
-@set STOCKCURSOR_DEF=invalid,unknown=-1;normal,arrow=0;beam,textSelect=1;wait,busy;cross;upArrow;handwriting;resizeWse;resizeEsw;resizeWe;resizeNs;resizeAll;cursorNo,no;hand;appStarting,semiWait;help;pin,locationSelect;person,personSelect
+@set STOCKCURSOR_DEF=invalid,unknown=-1;custom=0;normal,arrow;beam,textSelect;wait,busy;cross;upArrow;handwriting;resizeWse;resizeEsw;resizeWe;resizeNs;resizeAll;cursorNo,no;hand;appStarting,semiWait;help;pin,locationSelect;person,personSelect;end
 
 
 

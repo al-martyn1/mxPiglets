@@ -65,11 +65,13 @@ protected:
 
 public:
 
+    #if 0
     static
     WindowTimerImpl create(HWND h, UINT_PTR requestedId, timeout_t timeoutMs=0)
     {
         return WindowTimerImpl(h, requestedId, timeoutMs, true);
     }
+    #endif
 
     virtual bool isValid() const override
     {

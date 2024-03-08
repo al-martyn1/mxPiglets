@@ -17,17 +17,17 @@ public:
 
     bool isNull() const
     {
-        auto pThisParent  = static_cast<const T*>(this);
-        return !pThisParent->m_pImpl ? true : false;
+        auto pT  = static_cast<const T*>(this);
+        return !pT->m_pImpl ? true : false;
     }
 
     bool isValid() const
     {
-        auto pThisParent  = static_cast<const T*>(this);
-        if (!pThisParent->m_pImpl)
+        auto pT  = static_cast<const T*>(this);
+        if (!pT->m_pImpl)
             return false;
 
-        return pThisParent->m_pImpl->isValid();
+        return pT->m_pImpl->isValid();
     }
 
     auto getCheckedRawPtr(const char* methodName) const
@@ -37,9 +37,9 @@ public:
             throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": pimpl pointer not initialized");
         }
 
-        auto pThisParent  = static_cast<const T*>(this);
+        auto pT  = static_cast<const T*>(this);
 
-        return pThisParent->m_pImpl.get();
+        return pT->m_pImpl.get();
     }
 
     auto getCheckedRawPtr(const char* methodName)
@@ -49,11 +49,38 @@ public:
             throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": pimpl pointer not initialized");
         }
 
-        auto pThisParent  = static_cast<T*>(this);
+        auto pT  = static_cast<T*>(this);
 
-        return pThisParent->m_pImpl.get();
+        return pT->m_pImpl.get();
     }
 
+    template<typename TImpl>
+    auto getCheckedCastedRawPtr(const char* methodName) const
+    {
+        auto pInterfaceRawPtr = getCheckedRawPtr(methodName);
+
+        auto pImplRawPtr = dynamic_cast<TImpl*>(pInterfaceRawPtr);
+        if (!pImplRawPtr)
+        {
+            throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": is not compatible object implementation");
+        }
+
+        retun pImplRawPtr;
+    }
+
+    template<typename TImpl>
+    auto getCheckedCastedRawPtr(const char* methodName)
+    {
+        auto pInterfaceRawPtr = getCheckedRawPtr(methodName);
+
+        auto pImplRawPtr = dynamic_cast<TImpl*>(pInterfaceRawPtr);
+        if (!pImplRawPtr)
+        {
+            throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": is not compatible object implementation");
+        }
+
+        return pImplRawPtr;
+    }
 
 
 };
