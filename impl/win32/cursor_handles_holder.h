@@ -41,7 +41,7 @@ class CursorHandlesHolder
             case EStockCursor::wait          : id = IDC_WAIT ; break; // busy
             case EStockCursor::cross         : id = IDC_CROSS; break;
             case EStockCursor::upArrow       : id = IDC_UPARROW; break;
-            case EStockCursor::handwriting   : id = MAKEINTRESOURCE(32631); break;
+            case EStockCursor::handwriting   : id = MAKEINTRESOURCE(32631); break; // incompatible with ??? / Win10 compatible
             case EStockCursor::resizeWse     : id = IDC_SIZENWSE; break;
             case EStockCursor::resizeEsw     : id = IDC_SIZENESW; break;
             case EStockCursor::resizeWe      : id = IDC_SIZEWE ; break;
@@ -51,8 +51,8 @@ class CursorHandlesHolder
             case EStockCursor::hand          : id = IDC_HAND; break;
             case EStockCursor::appStarting   : id = IDC_APPSTARTING; break; // semiWait
             case EStockCursor::help          : id = IDC_HELP; break;
-            case EStockCursor::locationSelect: id = MAKEINTRESOURCE(32671); // IDC_PIN; break; // pin - incompatible with WinXP ???
-            case EStockCursor::personSelect  : id = MAKEINTRESOURCE(32672); // IDC_PERSON; break; // person - incompatible with WinXP ???
+            case EStockCursor::locationSelect: id = MAKEINTRESOURCE(32671); // IDC_PIN; break; // pin - incompatible with WinXP ??? Win10 incompatible also
+            case EStockCursor::personSelect  : id = MAKEINTRESOURCE(32672); // IDC_PERSON; break; // person - incompatible with WinXP ??? Win10 incompatible also
 
             //case EStockCursor::windowOriginal: [[fallthrough]];
             case EStockCursor::invalid       : [[fallthrough]];
@@ -70,8 +70,17 @@ class CursorHandlesHolder
 
         if (hCursor==0)
         {
-            //throw std::runtime_error("CursorHandlesHolder::createCursorHandle: failed to load stock cursor");
-            return (HCURSOR)0; // нахер не нужны исключени€
+            // try to create normal cursor
+            if (cursorKind!=EStockCursor::normal)
+            {
+                return createCursorHandle(EStockCursor::normal); // пытаемс€ рекурсивно создать обычный курсор
+            }
+            else
+            {
+                // чтобы не зарекурсивитьс€
+                throw std::runtime_error("CursorHandlesHolder::createCursorHandle: failed to load stock cursor"); // ƒаже обычный курсор не получаетс€ создать, что-то пошло по пизде
+                //return (HCURSOR)0; // нахер не нужны исключени€
+            }
         }
 
         return hCursor;
