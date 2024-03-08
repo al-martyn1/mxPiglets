@@ -45,7 +45,7 @@ protected:
 
     std::shared_ptr<ICursor>  m_pImpl;
 
-};
+}; // struct Cursor
 
 
 } // namespace mxPiglets

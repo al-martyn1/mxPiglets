@@ -10,7 +10,7 @@ struct IComparable : virtual public IObject
 
     virtual int compare(const IComparable *pOther) const = 0;
 
-}; // struct NonCopyableObject
+}; // struct IComparable
 
 
 } // namespace mxPiglets

@@ -56,7 +56,7 @@ protected:
 
     std::shared_ptr<IWindowTimer>  m_pImpl;
 
-};
+}; // struct WindowTimer
 
 
 } // namespace mxPiglets
