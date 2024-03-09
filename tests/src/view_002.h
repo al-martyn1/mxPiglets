@@ -18,6 +18,7 @@
 #include <array>
 //
 #include "mxPiglets/impl/win32/host_window_impl.h"
+#include "mxPiglets/impl/win32/elapsed_timer_impl.h"
 
 
 #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG(nFlags) (((nFlags)>>(30-16))&0x01)
@@ -62,13 +63,15 @@ class CBitmapView : public mxPiglets::HostWindowImpl< CScrollWindowImpl<CBitmapV
     mxPiglets::EStockCursor  curStockCursor = mxPiglets::EStockCursor::normal;
     mxPiglets::Cursor        defaultCursor;
 
+    mxPiglets::ElapsedTimer  elapsedTimer;
+
 public:
     DECLARE_WND_CLASS_EX(NULL, 0, -1)
 
     //CBitmap m_bmp;
     //SIZE m_size;
 
-    CBitmapView()
+    CBitmapView() : elapsedTimer(mxPiglets::createElapsedTimer())
     {
     }
 

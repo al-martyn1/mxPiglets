@@ -121,7 +121,7 @@ public:
         const WindowTimerImpl* pOther = dynamic_cast<const WindowTimerImpl*>(pComparable);
         if (!pOther)
         {
-            throw std::runtime_error("IWindowTimer::compare: pTimerOther is not compatible timer object implementation");
+            throw std::runtime_error("IWindowTimer::compare: pTimerOther is not compatible IWindowTimer object implementation");
         }
 
         if (hWnd!=pOther->hWnd)
