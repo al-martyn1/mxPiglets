@@ -31,3 +31,6 @@
 *.out
 *.app
 /tests/_prj_msvc/*.user
+/_generators/umba-enum-gen-help.txt
+/tests/_prj_msvc2019/*.user
+/tests/_prj_msvc2022/*.user
