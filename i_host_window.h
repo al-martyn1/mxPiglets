@@ -29,13 +29,15 @@ using namespace marty_draw_context;
 struct IHostWindow : public NonCopyableObject
 {
 
+protected:
+
+    // Обработчики событий, которые вызываются изнутри
 
     virtual void onConfigureDrawContextOffsetScale(IDrawContext *pdc) const = 0;
     // getDrawingContext() - возвращает не указатель, а экземпляр DC для рисования не в OnPaint. Это не в базе, а в реализации
 
     virtual void onWindowCreate() = 0; // вызываем при создании окна, объект класса уже создан и проинициализирован
     virtual void onWindowResize() = 0; // вызываем при изменении размера окна !!!
-
 
     virtual bool onWindowCloseQuery() = 0; // возвращает true, если закрытие разрешено
     virtual void onWindowClose() = 0;
@@ -48,6 +50,8 @@ struct IHostWindow : public NonCopyableObject
     virtual void onWindowMouseButtonEvents( MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
     virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
     virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const Point &point) = 0;
+
+public:
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 

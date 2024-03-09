@@ -52,11 +52,6 @@ public:
     {
     }
 
-    HWND getHwnd() const
-    {
-        return static_cast<const TParent*>(this)->m_hWnd;
-    }
-
     virtual bool isValid() const override
     {
         auto hWnd = getHwnd();
@@ -73,6 +68,13 @@ public:
         setMsgHandled(FALSE);
     }
 
+    HWND getHwnd() const
+    {
+        return static_cast<const TParent*>(this)->m_hWnd;
+    }
+
+protected:
+
     void trackMouseEvent()
     {
         TRACKMOUSEEVENT trme;
@@ -86,6 +88,8 @@ public:
             m_bMouseTracking = true;
         }
     }
+
+public:
 
     // Обработка оконных сообщений
 
@@ -129,6 +133,8 @@ public:
         CHAIN_MSG_MAP(TParent);
 
     END_MSG_MAP()
+
+protected:
 
     int OnCreate(LPCREATESTRUCT lpCreateStruct)
     {
@@ -424,6 +430,8 @@ public:
     //------------------------------
     // Виртуальные методы
     //------------------------------
+
+public:
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const override
     {
