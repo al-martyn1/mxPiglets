@@ -4,9 +4,12 @@
 #include "marty_draw_context/i_image_list.h"
 
 //
+#include "types.h"
+//
 #include "non_copyable_object.h"
 #include "cursor.h"
 #include "window_timer.h"
+
 
 
 namespace mxPiglets {
@@ -14,34 +17,6 @@ namespace mxPiglets {
 
 using namespace marty_draw_context;
 
-
-
-struct Point
-{
-    int x = 0;
-    int y = 0;
-
-}; // struct Point
-
-
-
-struct Size
-{
-    int width  = 0;
-    int height = 0;
-
-}; // struct Size
-
-
-
-struct Rect
-{
-    int x = 0;
-    int y = 0;
-    int width  = 0;
-    int height = 0;
-
-}; // struct Rect
 
 
 
