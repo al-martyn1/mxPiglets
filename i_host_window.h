@@ -41,9 +41,13 @@ struct IHostWindow : public NonCopyableObject
     virtual void onWindowClose() = 0;
     virtual void onWindowDestroy() = 0;
 
-    virtual void onTimerEvent(const WindowTimer timer) = 0;
+    virtual void onWindowTimerEvent(const WindowTimer timer) = 0;
 
-    virtual void onKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) = 0;
+    virtual void onWindowKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) = 0;
+
+    virtual void onWindowMouseButtonEvents( MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
+    virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
+    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const Point &point) = 0;
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 

@@ -117,7 +117,7 @@ public:
     }
     
 
-    virtual void onTimerEvent(const mxPiglets::WindowTimer timer) override
+    virtual void onWindowTimerEvent(const mxPiglets::WindowTimer timer) override
     {
         if (timer==timerCursorChange)
         {

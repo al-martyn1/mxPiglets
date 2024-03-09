@@ -37,11 +37,12 @@ class HostWindowImpl : public TParent
                      , public IHostWindow
 {
 
-    mutable UINT_PTR    curTimerId  = 1; // Переделать на атомики
+    mutable UINT_PTR    m_curTimerId          = 1; // Переделать на атомики???
+    bool                m_bMouseTracking      = false;
 
     // Чтобы постоянно думми не создавать, создадим заранее всё, что нужно, в OnCreate, а в OnTimer просто будем менять идентификатор таймера
-    mutable std::shared_ptr<WindowTimerImpl>  pWindowTimerImplForOnTimer;
-    mutable std::shared_ptr<IWindowTimer>     pIWindowTimerForOnTimer;
+    mutable std::shared_ptr<WindowTimerImpl>  m_pWindowTimerImplForOnTimer;
+    mutable std::shared_ptr<IWindowTimer>     m_pIWindowTimerForOnTimer;
     
 
 
@@ -72,6 +73,20 @@ public:
         setMsgHandled(FALSE);
     }
 
+    void trackMouseEvent()
+    {
+        TRACKMOUSEEVENT trme;
+        trme.cbSize      = sizeof(trme);
+        trme.dwFlags     = TME_HOVER | TME_LEAVE;
+        trme.hwndTrack   = m_hWnd;
+        trme.dwHoverTime = (DWORD)HOVER_DEFAULT;
+
+        if (_TrackMouseEvent(&trme))
+        {
+            m_bMouseTracking = true;
+        }
+    }
+
     // Обработка оконных сообщений
 
     BEGIN_MSG_MAP(CBitmapView)
@@ -88,28 +103,28 @@ public:
         //  
         // MSG_WM_CAPTURECHANGED(OnCaptureChanged)
         //  
-        // MSG_WM_MOUSEHOVER(OnMouseHover)
-        // MSG_WM_MOUSELEAVE(OnMouseLeave)
-        //  
-        // MSG_WM_MOUSEWHEEL(OnMouseWheel)
-        //  
-        // MSG_WM_MOUSEMOVE(OnMouseMove)
-        //  
-        // MSG_WM_LBUTTONDOWN(OnLButtonDown)
-        // MSG_WM_LBUTTONUP(OnLButtonUp)
-        // MSG_WM_LBUTTONDBLCLK(OnLButtonDblClk)
-        //  
-        // MSG_WM_RBUTTONDOWN(OnRButtonDown)
-        // MSG_WM_RBUTTONUP(OnRButtonUp)
-        // MSG_WM_RBUTTONDBLCLK(OnRButtonDblClk)
-        //  
-        // MSG_WM_MBUTTONDOWN(OnMButtonDown)
-        // MSG_WM_MBUTTONUP(OnMButtonUp)
-        // MSG_WM_MBUTTONDBLCLK(OnMButtonDblClk)
-        //  
-        // MSG_WM_XBUTTONDOWN(OnXButtonDown)
-        // MSG_WM_XBUTTONUP(OnXButtonUp)
-        // MSG_WM_XBUTTONDBLCLK(OnXButtonDblClk)
+        MSG_WM_MOUSEHOVER(OnMouseHover)
+        MSG_WM_MOUSELEAVE(OnMouseLeave)
+
+        MSG_WM_MOUSEWHEEL(OnMouseWheel)
+
+        MSG_WM_MOUSEMOVE(OnMouseMove)
+
+        MSG_WM_LBUTTONDOWN(OnLButtonDown)
+        MSG_WM_LBUTTONUP(OnLButtonUp)
+        MSG_WM_LBUTTONDBLCLK(OnLButtonDblClk)
+         
+        MSG_WM_RBUTTONDOWN(OnRButtonDown)
+        MSG_WM_RBUTTONUP(OnRButtonUp)
+        MSG_WM_RBUTTONDBLCLK(OnRButtonDblClk)
+         
+        MSG_WM_MBUTTONDOWN(OnMButtonDown)
+        MSG_WM_MBUTTONUP(OnMButtonUp)
+        MSG_WM_MBUTTONDBLCLK(OnMButtonDblClk)
+         
+        MSG_WM_XBUTTONDOWN(OnXButtonDown)
+        MSG_WM_XBUTTONUP(OnXButtonUp)
+        MSG_WM_XBUTTONDBLCLK(OnXButtonDblClk)
 
         CHAIN_MSG_MAP(TParent);
 
@@ -120,13 +135,13 @@ public:
         MARTY_ARG_USED(lpCreateStruct);
         setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
 
-        pWindowTimerImplForOnTimer = std::make_shared<WindowTimerImpl>(getHwnd(), 0, 0, false);
-        pIWindowTimerForOnTimer    = std::static_pointer_cast<IWindowTimer>(pWindowTimerImplForOnTimer);
+        m_pWindowTimerImplForOnTimer = std::make_shared<WindowTimerImpl>(getHwnd(), 0, 0, false);
+        m_pIWindowTimerForOnTimer    = std::static_pointer_cast<IWindowTimer>(m_pWindowTimerImplForOnTimer);
 
-    // mutable std::shared_ptr<WindowTimerImpl>  pWindowTimerImplForOnTimer;
-    // mutable std::shared_ptr<IWindowTimer>     pIWindowTimerForOnTimer;
+    // mutable std::shared_ptr<WindowTimerImpl>  m_pWindowTimerImplForOnTimer;
+    // mutable std::shared_ptr<IWindowTimer>     m_pIWindowTimerForOnTimer;
 
-        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, bRunning);
+        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), m_curTimerId++, timeoutMs, bRunning);
         // return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
 
         onWindowCreate();
@@ -161,8 +176,8 @@ public:
 
     void OnTimer(UINT_PTR nIDEvent)
     {
-        pWindowTimerImplForOnTimer->idTimerEvent = nIDEvent;
-        onTimerEvent(WindowTimer(pIWindowTimerForOnTimer));
+        m_pWindowTimerImplForOnTimer->idTimerEvent = nIDEvent;
+        onWindowTimerEvent(WindowTimer(m_pIWindowTimerForOnTimer));
     }
 
     void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -189,7 +204,7 @@ public:
             keyEventFlags |= marty_vk::KeyEventFlags::ExtendedKey;
         }
 
-        onKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
+        onWindowKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
     }
 
 // namespace marty_vk{
@@ -234,12 +249,108 @@ public:
             keyEventFlags |= marty_vk::KeyEventFlags::ExtendedKey;
         }
 
-        onKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
+        onWindowKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
+    }
+
+    BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
+    {
+        setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
+        forceProcessWmTimerMessages();
+        MouseButtonStateFlags mbStateFlags = (MouseButtonStateFlags)nFlags;
+        onWindowMouseWheel(mbStateFlags, (int)zDelta, Point{(int)point.x,(int)point.y}); // ? TRUE : FALSE;
+        return TRUE;
+    }
+
+    void OnMouseHover(WPARAM wParam /* MK_* */ , CPoint point)
+    {
+        m_bMouseTracking = false;
+        OnMouseMoveEvents(MouseMoveEventType::hover, (MouseButtonStateFlags)wParam, Point{(int)point.x,(int)point.y});
+    }
+
+    void OnMouseLeave()
+    {
+        m_bMouseTracking = false;
+        OnMouseMoveEvents(MouseMoveEventType::leave, MouseButtonStateFlags::none, Point{0,0});
+    }
+
+    // https://learn.microsoft.com/en-us/windows/win32/gdi/drawing-with-the-mouse
+    void OnMouseMove(UINT nFlags, CPoint point)
+    {
+        if (!m_bMouseTracking)
+        {
+            trackMouseEvent();
+        }
+
+        OnMouseMoveEvents(MouseMoveEventType::move, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y});
     }
 
 
+    void OnLButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnLButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnLButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnRButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnRButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnRButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnMButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnMButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnMButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
 
+    void OnXButtonDown(int fwButton, int dwKeys, CPoint point)
+    {
+        if (fwButton&XBUTTON1)
+        {
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+        if (fwButton&XBUTTON2)
+        {
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+    }
 
+    void OnXButtonUp(int fwButton, int dwKeys, CPoint point)
+    {
+        if (fwButton&XBUTTON1)
+        {
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+        if (fwButton&XBUTTON2)
+        {
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+    }
+
+    void OnXButtonDblClk(int fwButton, int dwKeys, CPoint point)
+    {
+        if (fwButton&XBUTTON1)
+        {
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+        if (fwButton&XBUTTON2)
+        {
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+        }
+    }
+
+    void OnMouseButtonEvents( MouseButton           mouseButton
+                            , MouseButtonEvent      buttonEvent
+                            , MouseButtonStateFlags mbStateFlags
+                            , const Point &point
+                            )
+    {
+        setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
+        forceProcessWmTimerMessages();
+        onWindowMouseButtonEvents(mouseButton, buttonEvent, mbStateFlags, point);
+    }
+
+    void OnMouseMoveEvents( MouseMoveEventType    moveEventType
+                          , MouseButtonStateFlags mbStateFlags
+                          , const Point &point
+                          )
+    {
+        setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
+        forceProcessWmTimerMessages();
+        onWindowMouseMoveEvents(moveEventType, mbStateFlags, point);
+    }
 
     //------------------------------
     // Дефолтные виртуальные обработчики событий
@@ -260,9 +371,27 @@ public:
     {
     }
 
-    //------------------------------
-    // Виртуальные методы
-    //------------------------------
+    virtual void onWindowMouseButtonEvents(MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const Point &point) override
+    {
+        MARTY_ARG_USED(mouseButton);
+        MARTY_ARG_USED(buttonEvent);
+        MARTY_ARG_USED(mbStateFlags);
+        MARTY_ARG_USED(point);
+    }
+
+    virtual void onWindowMouseMoveEvents(MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const Point &point) override
+    {
+        MARTY_ARG_USED(moveEventType);
+        MARTY_ARG_USED(mbStateFlags);
+        MARTY_ARG_USED(point);
+    }
+
+    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const Point &point) override
+    {
+        MARTY_ARG_USED(mbStateFlags);
+        MARTY_ARG_USED(zDelta);
+        MARTY_ARG_USED(point);
+    }
 
     virtual bool onWindowCloseQuery() override // возвращает true, если закрытие разрешено
     {
@@ -279,12 +408,12 @@ public:
         PostQuitMessage(0);
     }
 
-    virtual void onTimerEvent(const WindowTimer timer) override
+    virtual void onWindowTimerEvent(const WindowTimer timer) override
     {
         MARTY_ARG_USED(timer);
     }
 
-    virtual void onKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) override
+    virtual void onWindowKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) override
     {
         MARTY_ARG_USED(keyEventFlags);
         MARTY_ARG_USED(vkCode);
@@ -292,10 +421,14 @@ public:
     }
 
 
+    //------------------------------
+    // Виртуальные методы
+    //------------------------------
+
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const override
     {
-        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(WindowTimerImpl::create(getHwnd(), curTimerId++, timeoutMs, bRunning)); // Not working
-        auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), curTimerId++, timeoutMs, bRunning);
+        // auto pSharedImpl = std::make_shared<WindowTimerImpl>(WindowTimerImpl::create(getHwnd(), m_curTimerId++, timeoutMs, bRunning)); // Not working
+        auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), m_curTimerId++, timeoutMs, bRunning);
         return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
     }
 
