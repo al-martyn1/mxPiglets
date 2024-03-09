@@ -79,9 +79,10 @@ public:
         MSG_WM_CLOSE(OnClose)
         MSG_WM_DESTROY(OnDestroy)
         MSG_WM_TIMER(OnTimer)
+        MSG_WM_KEYDOWN(OnKeyDown)
+        MSG_WM_KEYUP(OnKeyUp)
+
         // //MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
-        // MSG_WM_KEYDOWN(OnKeyDown)
-        // MSG_WM_KEYUP(OnKeyUp)
         // MSG_WM_SIZE(OnSize)
         // MSG_WM_SIZING(OnSizing)
         //  
@@ -166,14 +167,79 @@ public:
 
     void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     {
-        MARTY_ARG_USED(nChar);
-        MARTY_ARG_USED(nRepCnt);
-        MARTY_ARG_USED(nFlags);
+        setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
 
-// #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG(nFlags) (((nFlags)>>(30-16))&0x01)
-// #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_PREV_DOWN_STATE_FLAG(nFlags)  CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG((nFlags))
+        marty_vk::KeyEventFlags keyEventFlags = marty_vk::KeyEventFlags::KeyDown;
 
+        // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keydown
+        // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keyup
+        // Отнимаем 16 от номера бита, так как WTL сама извлекает repeat count и сдвигает флаги на 16 бит
+
+        // 30 The previous key state. The value is always 1 for a WM_KEYUP message.
+        // 30 The previous key state. The value is 1 if the key is down before the message is sent, or it is zero if the key is up (for WM_KEYDOWN).
+        if (((nFlags)>>(30-16))&0x01)
+        {
+            keyEventFlags |= marty_vk::KeyEventFlags::PrevKeyStateDown;
+        }
+
+        // 24 Indicates whether the key is an extended key, such as the right-hand ALT and CTRL keys that appear on an enhanced 
+        // 101- or 102-key keyboard. The value is 1 if it is an extended key; otherwise, it is 0.
+        if (((nFlags)>>(24-16))&0x01)
+        {
+            keyEventFlags |= marty_vk::KeyEventFlags::ExtendedKey;
+        }
+
+        onKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
     }
+
+// namespace marty_vk{
+//  
+// enum class KeyEventFlags : std::uint32_t
+// {
+//     Invalid            = (std::uint32_t)(-1),
+//     Unknown            = (std::uint32_t)(-1),
+//     None               = 0x0000,
+//     NoFlags            = 0x0000,
+//     Extended           = 0x0100,
+//     ExtendedKey        = 0x0100,
+//     AltDown            = 0x2000,
+//     Repeat             = 0x4000,
+//     Up                 = 0x8000,
+//     PrevKeyStateDown   = 0x10000,
+//     KeyDown            = 0x20000
+//  
+// }; // enum class KeyEventFlags : std::uint32_t
+
+    void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+    {
+        setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
+
+        marty_vk::KeyEventFlags keyEventFlags = marty_vk::KeyEventFlags::KeyUp; // Единственное отличие от WM_KEYDOWN
+
+        // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keydown
+        // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keyup
+        // Отнимаем 16 от номера бита, так как WTL сама извлекает repeat count и сдвигает флаги на 16 бит
+
+        // 30 The previous key state. The value is always 1 for a WM_KEYUP message.
+        // 30 The previous key state. The value is 1 if the key is down before the message is sent, or it is zero if the key is up (for WM_KEYDOWN).
+        if (((nFlags)>>(30-16))&0x01)
+        {
+            keyEventFlags |= marty_vk::KeyEventFlags::PrevKeyStateDown;
+        }
+
+        // 24 Indicates whether the key is an extended key, such as the right-hand ALT and CTRL keys that appear on an enhanced 
+        // 101- or 102-key keyboard. The value is 1 if it is an extended key; otherwise, it is 0.
+        if (((nFlags)>>(24-16))&0x01)
+        {
+            keyEventFlags |= marty_vk::KeyEventFlags::ExtendedKey;
+        }
+
+        onKeyEvent(keyEventFlags, (marty_vk::VkCode)nChar, (std::uint32_t)nRepCnt);
+    }
+
+
+
+
 
     //------------------------------
     // Дефолтные виртуальные обработчики событий
@@ -216,6 +282,13 @@ public:
     virtual void onTimerEvent(const WindowTimer timer) override
     {
         MARTY_ARG_USED(timer);
+    }
+
+    virtual void onKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) override
+    {
+        MARTY_ARG_USED(keyEventFlags);
+        MARTY_ARG_USED(vkCode);
+        MARTY_ARG_USED(nRepCnt);
     }
 
 

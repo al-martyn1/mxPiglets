@@ -9,6 +9,8 @@
 #include "non_copyable_object.h"
 #include "cursor.h"
 #include "window_timer.h"
+//
+#include "marty_vk/VkCode.h"
 
 
 
@@ -40,6 +42,8 @@ struct IHostWindow : public NonCopyableObject
     virtual void onWindowDestroy() = 0;
 
     virtual void onTimerEvent(const WindowTimer timer) = 0;
+
+    virtual void onKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) = 0;
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 

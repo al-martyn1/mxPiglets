@@ -59,15 +59,39 @@
 @rem IDC_PIN           MAKEINTRESOURCE(32671)    Location select
 @rem IDC_PERSON        MAKEINTRESOURCE(32672)    Person select
 
+
 @set STOCKCURSOR_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,fmt-hex %VALUES_CAMEL% 
 @rem %SERIALIZE_PASCAL%
 @set STOCKCURSOR_DEF=invalid,unknown=-1;custom=0;normal,arrow;beam,textSelect;wait,busy;cross;upArrow;handwriting;resizeWse;resizeEsw;resizeWe;resizeNs;resizeAll;cursorNo,no;hand;appStarting,semiWait;help;pin,locationSelect;person,personSelect;end
 
 
+@rem --- Compatible with Draw Context definitions
+
+@set MOUSEBUTTONEVENT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@set MOUSEBUTTONEVENT_DEF=invalid,unknown=-1;released=0;pressed=1;doubleClick=2
+
+@set MOUSEBUTTON_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@set MOUSEBUTTON_DEF=invalid,unknown=-1;none=0;leftButton;rightButton;middleButton,midButton;xButton1;xButton2
+
+@set MOUSEBUTTONSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %SERIALIZE_PASCAL% %FLAGENUM_EXTRA%
+@set MOUSEBUTTONSTATEFLAGS_DEF=invalid,unknown=-1;none=0;leftButtonPressed=0x0001;rightButtonPressed=0x0002;shiftPressed=0x0004;controlPressed=0x0008;middleButtonPressed,midButtonPressed=0x0010;xButton1Pressed=0x0020;xButton2Pressed=0x0040
+
+@set MOUSEMOVEEVENTTYPE_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@rem set MOUSEMOVEEVENTTYPE_DEF=invalid,unknown=-1;move=0;hover;leave;enter
+@set MOUSEMOVEEVENTTYPE_DEF=invalid,unknown=-1;move=0;hover;leave
+
+@rem --- Compatible with marty_vk
+@rem set KEYEVENTFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@rem set KEYEVENTFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Extended,ExtendedKey=0x0100;AltDown=0x2000;Repeat=0x4000;Up=0x8000;prevKeyStateDown;keyDown
+
 
 @rem  %TPL_OVERRIDE%
 
 umba-enum-gen %GEN_OPTS% %HEX2% ^
-%STOCKCURSOR_GEN_FLAGS%                  %UINT32% -E=StockCursor                        -F=%STOCKCURSOR_DEF%               ^
+%STOCKCURSOR_GEN_FLAGS%                 %UINT32% -E=StockCursor                      -F=%STOCKCURSOR_DEF%           ^
+%MOUSEBUTTONEVENT_GEN_FLAGS%            %UINT32% -E=MouseButtonEvent                 -F=%MOUSEBUTTONEVENT_DEF%      ^
+%MOUSEBUTTON_GEN_FLAGS%                 %UINT32% -E=MouseButton                      -F=%MOUSEBUTTON_DEF%           ^
+%MOUSEBUTTONSTATEFLAGS_GEN_FLAGS%       %UINT32% -E=MouseButtonStateFlags            -F=%MOUSEBUTTONSTATEFLAGS_DEF% ^
+%MOUSEMOVEEVENTTYPE_GEN_FLAGS%          %UINT32% -E=MouseMoveEventType               -F=%MOUSEMOVEEVENTTYPE_DEF%    ^
 ..\enums.h
 
