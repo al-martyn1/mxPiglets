@@ -39,6 +39,7 @@ class HostWindowImpl : public TParent
 
     mutable UINT_PTR    m_curTimerId          = 1; // Переделать на атомики???
     bool                m_bMouseTracking      = false;
+    //bool                m_mouseCaptured       = false;
 
     // Чтобы постоянно думми не создавать, создадим заранее всё, что нужно, в OnCreate, а в OnTimer просто будем менять идентификатор таймера
     mutable std::shared_ptr<WindowTimerImpl>  m_pWindowTimerImplForOnTimer;
@@ -100,6 +101,7 @@ public:
         MSG_WM_TIMER(OnTimer)
         MSG_WM_KEYDOWN(OnKeyDown)
         MSG_WM_KEYUP(OnKeyUp)
+        MSG_WM_CAPTURECHANGED(OnCaptureChanged)
 
         // //MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
         // MSG_WM_SIZE(OnSize)
@@ -168,6 +170,14 @@ protected:
         onWindowDestroy();
     }
 
+    void OnCaptureChanged(const CWindow &wnd)
+    {
+        if (wnd.m_hWnd!=getHwnd())
+        {
+            //m_mouseCaptured = false;
+            onWindowMouseCaptureChanged(true);
+        }
+    }
 
     void forceProcessWmTimerMessages()
     {
@@ -426,6 +436,11 @@ protected:
         MARTY_ARG_USED(nRepCnt);
     }
 
+    virtual void onWindowMouseCaptureChanged(bool bLoose) override
+    {
+        MARTY_ARG_USED(bLoose);
+    }
+
 
     //------------------------------
     // Виртуальные методы
@@ -476,9 +491,127 @@ public:
         return showCounter>=0;
     }
 
+protected:
 
-    //virtual bool stopTimer(WindowTimer t) override
-    //virtual bool removeTimer(WindowTimer t) override
+    static
+    POINT p2p(Point p)
+    {
+        POINT pntRes;
+        pntRes.x = (LONG)p.x;
+        pntRes.y = (LONG)p.y;
+        return pntRes;
+    }
+
+    static
+    Point p2p(POINT p)
+    {
+        Point pntRes;
+        pntRes.x = (int)p.x;
+        pntRes.y = (int)p.y;
+        return pntRes;
+    }
+
+    Point screenToWindowClientAreaPos(Point pos) const
+    {
+        POINT p = p2p(pos);
+
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-clienttoscreen
+        auto bRes = ::ScreenToClient(getHwnd(), &p);
+        if (!bRes)
+        {
+            throw std::runtime_error("HostWindow::screenToWindowClientAreaPos: ScreenToClient failed");
+        }
+
+        return p2p(p);
+    }
+
+    Point windowClientAreaToScreenPos(Point pos) const
+    {
+        POINT p = p2p(pos);
+
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-screentoclient
+        auto bRes = ::ClientToScreen(getHwnd(), &p);
+        if (!bRes)
+        {
+            throw std::runtime_error("HostWindow::windowClientAreaToScreenPos: ScreenToClient failed");
+        }
+
+        return p2p(p);
+    }
+
+
+public:
+
+    // In window client area coords
+    virtual Point getWindowCursorPos() const override
+    {
+        POINT pos{0,0};
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getcursorpos
+        if (!::GetCursorPos(&pos))
+        {
+            throw std::runtime_error("HostWindow::getWindowCursorPos: GetCursorPos failed");
+        }
+
+        return screenToWindowClientAreaPos(p2p(pos));
+    }
+
+    virtual bool  setWindowCursorPos(Point pos) const override
+    {
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos
+        auto screenPos = p2p(windowClientAreaToScreenPos(pos));
+        return ::SetCursorPos(screenPos.x,screenPos.y) ? true : false;
+    }
+
+    // window client area coords
+    virtual Size getWindowClientSize() const override
+    {
+        RECT r{0,0,0,0}; // https://learn.microsoft.com/en-us/windows/win32/api/windef/ns-windef-rect
+        if (!::GetClientRect(getHwnd(), &r))
+        {
+            throw std::runtime_error("HostWindow::getClientSize: GetCursorPos failed");
+        }
+
+        Size szRes;
+        szRes.width  = (int)(r.right-r.left);
+        szRes.height = (int)(r.bottom-r.top);
+
+        return szRes;
+    }
+
+    virtual bool setWindowMouseCapture() override // return mouse previously captured or not
+    {
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcapture
+        HWND hwndPrevCapture = ::SetCapture(getHwnd());
+        //m_mouseCaptured = true;
+        onWindowMouseCaptureChanged(false);
+        return hwndPrevCapture!=0;
+    }
+
+    virtual bool clrWindowMouseCapture() override
+    {
+        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-releasecapture
+        //m_mouseCaptured = false;
+        onWindowMouseCaptureChanged(true);
+        return ::ReleaseCapture() ? true : false;
+    }
+
+    virtual bool isMouseCaptured() const override // any window
+    {
+        HWND hwndCapture = ::GetCapture();
+        return hwndCapture!=0;
+    }
+
+    virtual bool isWindowMouseCaptured() const override // this window
+    {
+        HWND hwndCapture = ::GetCapture();
+        if (hwndCapture==0)
+        {
+            return false; // not captured at all
+        }
+    
+        return hwndCapture==getHwnd();
+    }
+
 
 
 }; // class HostWindowImpl

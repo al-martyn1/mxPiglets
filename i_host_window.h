@@ -43,6 +43,8 @@ protected:
     virtual void onWindowClose() = 0;
     virtual void onWindowDestroy() = 0;
 
+    virtual void onWindowMouseCaptureChanged(bool bLoose) = 0;
+
     virtual void onWindowTimerEvent(const WindowTimer timer) = 0;
 
     virtual void onWindowKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) = 0;
@@ -58,7 +60,19 @@ public:
     virtual Cursor createStockCursor(EStockCursor cursorKind) const = 0;
     virtual Cursor setCursor(Cursor cursor) = 0;
     virtual Cursor setCursor(EStockCursor cursorKind) = 0;
-    virtual bool showCursor(bool bShow) = 0;
+    virtual bool   showCursor(bool bShow) = 0;
+
+    // In window client area coords
+    virtual Point getWindowCursorPos() const = 0;
+    virtual bool  setWindowCursorPos(Point pos) const = 0;
+
+    // window client area coords
+    virtual Size getWindowClientSize() const = 0;
+
+    virtual bool setWindowMouseCapture() = 0; // return mouse previously captured or not
+    virtual bool clrWindowMouseCapture() = 0;
+    virtual bool isMouseCaptured() const = 0; // any window
+    virtual bool isWindowMouseCaptured() const = 0; // this window
 
 
     //virtual bool stopTimer(WindowTimer t) = 0;

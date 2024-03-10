@@ -119,8 +119,13 @@ public:
 
     virtual void onWindowTimerEvent(const mxPiglets::WindowTimer timer) override
     {
+        using umba::lout;
+        using namespace umba::omanip;
+
         if (timer==timerCursorChange)
         {
+
+            lout << "elapsedTimer.getElapsedTime: " << (unsigned)elapsedTimer.getElapsedTime() << "\n";
             const std::uint32_t end    = (std::uint32_t)mxPiglets::EStockCursor::end;
             std::uint32_t curCursorU32 = (std::uint32_t)curStockCursor;
             ++curCursorU32;
