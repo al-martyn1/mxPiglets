@@ -43,7 +43,7 @@ protected:
     virtual void onWindowClose() = 0;
     virtual void onWindowDestroy() = 0;
 
-    virtual void onWindowMouseCaptureChanged(bool bLoose) = 0;
+    virtual void onWindowMouseCaptureChanged(bool bCaptured) = 0;
 
     virtual void onWindowTimerEvent(const WindowTimer timer) = 0;
 

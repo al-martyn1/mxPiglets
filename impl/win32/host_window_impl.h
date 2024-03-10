@@ -175,7 +175,7 @@ protected:
         if (wnd.m_hWnd!=getHwnd())
         {
             //m_mouseCaptured = false;
-            onWindowMouseCaptureChanged(true);
+            onWindowMouseCaptureChanged(false);
         }
     }
 
@@ -436,9 +436,9 @@ protected:
         MARTY_ARG_USED(nRepCnt);
     }
 
-    virtual void onWindowMouseCaptureChanged(bool bLoose) override
+    virtual void onWindowMouseCaptureChanged(bool bCaptured) override
     {
-        MARTY_ARG_USED(bLoose);
+        MARTY_ARG_USED(bCaptured);
     }
 
 
@@ -583,7 +583,7 @@ public:
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcapture
         HWND hwndPrevCapture = ::SetCapture(getHwnd());
         //m_mouseCaptured = true;
-        onWindowMouseCaptureChanged(false);
+        onWindowMouseCaptureChanged(true);
         return hwndPrevCapture!=0;
     }
 
@@ -591,7 +591,7 @@ public:
     {
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-releasecapture
         //m_mouseCaptured = false;
-        onWindowMouseCaptureChanged(true);
+        onWindowMouseCaptureChanged(false);
         return ::ReleaseCapture() ? true : false;
     }
 
