@@ -74,6 +74,22 @@ public:
     virtual bool isMouseCaptured() const = 0; // any window
     virtual bool isWindowMouseCaptured() const = 0; // this window
 
+    virtual Size getDialogBaseUnits() const = 0;
+    virtual Size mapDbuSizeToPixelSize(Size size) const = 0;
+
+
+    // virtual marty_draw_context::DrawSize getDialigBaseUnits() override
+    // {
+    //     long dbu = ::GetDialogBaseUnits();
+    //  
+    //     // The low-order word of the return value contains the horizontal dialog box base unit,
+    //     // and the high-order word contains the vertical dialog box base unit.
+    //     unsigned cx = LOWORD(dbu);
+    //     unsigned cy = HIWORD(dbu);
+    //  
+    //     return mapRawToLogicSize(DrawCoord{cx,cy});
+    // }
+
 
     //virtual bool stopTimer(WindowTimer t) = 0;
     //virtual bool removeTimer(WindowTimer t) = 0;

@@ -612,6 +612,41 @@ public:
         return hwndCapture==getHwnd();
     }
 
+    virtual Size getDialogBaseUnits() const override
+    {
+         long dbu = ::GetDialogBaseUnits();
+      
+         // The low-order word of the return value contains the horizontal dialog box base unit,
+         // and the high-order word contains the vertical dialog box base unit.
+         int cx = (int)LOWORD(dbu);
+         int cy = (int)HIWORD(dbu);
+
+         return Size{cx,cy};
+    }
+
+    virtual Size mapDbuSizeToPixelSize(Size size) const override
+    {
+         Size dbu = getDialogBaseUnits();
+         auto pixelX = ::MulDiv(size.width , dbu.width , 4);
+         auto pixelY = ::MulDiv(size.height, dbu.height, 8);
+
+         return Size{pixelX,pixelY};
+    
+    }
+
+
+
+    // virtual marty_draw_context::DrawSize getDialigBaseUnits() override
+    // {
+    //     long dbu = ::GetDialogBaseUnits();
+    //  
+    //     // The low-order word of the return value contains the horizontal dialog box base unit,
+    //     // and the high-order word contains the vertical dialog box base unit.
+    //     unsigned cx = LOWORD(dbu);
+    //     unsigned cy = HIWORD(dbu);
+    //  
+    //     return mapRawToLogicSize(DrawCoord{cx,cy});
+    // }
 
 
 }; // class HostWindowImpl

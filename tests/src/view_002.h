@@ -85,6 +85,10 @@ public:
         using umba::lout;
         using namespace umba::omanip;
 
+        auto dbu = getDialogBaseUnits();
+        auto dbuScaledSize = mapDbuSizeToPixelSize(mxPiglets::Size{1,1});
+        MARTY_ARG_USED(dbu);
+        
 
         timer1 = createTimer(100);
         timer2 = createTimer(200);
@@ -107,7 +111,9 @@ public:
         {
             lout << "timer1!=timer2\n";
         }
-        
+
+        defaultCursor = setCursor(createStockCursor(mxPiglets::EStockCursor::wait));
+
     }
 
     virtual void onWindowClose() override
@@ -126,6 +132,8 @@ public:
         {
 
             lout << "elapsedTimer.getElapsedTime: " << (unsigned)elapsedTimer.getElapsedTime() << "\n";
+
+            #if 0
             const std::uint32_t end    = (std::uint32_t)mxPiglets::EStockCursor::end;
             std::uint32_t curCursorU32 = (std::uint32_t)curStockCursor;
             ++curCursorU32;
@@ -138,11 +146,35 @@ public:
                 curStockCursor = (mxPiglets::EStockCursor)curCursorU32;
             }
 
+            if (curStockCursor==mxPiglets::EStockCursor::resizeWse)
+            {
+                setWindowCursorPos(mxPiglets::Point{-50,-50});
+            }
+            else if (curStockCursor==mxPiglets::EStockCursor::resizeEsw)
+            {
+                setWindowCursorPos(mxPiglets::Point{150,-50});
+            }
+            // else if (curStockCursor==mxPiglets::EStockCursor::resizeWe)
+            // {
+            //     setWindowCursorPos(Point{});
+            // }
+            // else if (curStockCursor==mxPiglets::EStockCursor::resizeNs)
+            // {
+            //     setWindowCursorPos(Point{});
+            // }
+            // else if (curStockCursor==mxPiglets::EStockCursor::resizeAll)
+            // {
+            //     setWindowCursorPos(Point{});
+            // }
+
+
             auto prevCursor = setCursor(createStockCursor(curStockCursor));
             if (!defaultCursor.isValid())
             {
                 defaultCursor = prevCursor;
             }
+
+            #endif
 
             //mxPiglets::EStockCursor  curStockCursor = mxPiglets::EStockCursor::normal;
         }
