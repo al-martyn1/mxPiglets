@@ -40,12 +40,19 @@ struct Cursor : public Comparable<Cursor>
         return getCheckedRawPtr("Cursor::getCursorKind")->getCursorKind();
     }
 
+    static
+    Cursor createStockCursor(EStockCursor cursorKind);
+
 
 protected:
 
     std::shared_ptr<ICursor>  m_pImpl;
 
 }; // struct Cursor
+
+
+
+
 
 
 } // namespace mxPiglets

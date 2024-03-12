@@ -111,6 +111,14 @@ struct CursorImpl : public ICursor
 #include "../../warnings/pop.h"
 
 
+inline
+Cursor Cursor::createStockCursor(EStockCursor cursorKind)
+{
+    auto &cursorsHolder = getCursorHandlesHolder();
+    auto pSharedImpl = std::make_shared<CursorImpl>(cursorKind, &cursorsHolder);
+    return Cursor(std::static_pointer_cast<ICursor>(pSharedImpl));
+}
+
 
 
 } // namespace mxPiglets
