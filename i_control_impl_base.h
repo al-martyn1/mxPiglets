@@ -12,7 +12,8 @@ struct IControlImplBase : public IControl
 
 protected:
 
-    ControlFlags         m_controlFlags = ControlFlags::none;
+    IHostWindow*         m_pHostWindow      = 0;
+    ControlFlags         m_controlFlags     = ControlFlags::none;
 
 
 public:
@@ -31,8 +32,29 @@ public:
         return pCmpThis<pOther ? -1 : 1;
     }
 
+    //----------------------------------------------------------------------------
+    // HostWindow
+
+    virtual IHostWindow*       getHostWindow() override
+    {
+        return m_pHostWindow;
+    }
+
+    virtual const IHostWindow* getHostWindow() const override
+    {
+        return m_pHostWindow;
+    }
+
+    virtual IHostWindow*       setHostWindow(IHostWindow* phw) override //!< Возвращает старый указатель IHostWindow*
+    {
+        return std::exchange(m_pHostWindow, phw);
+    }
+
 
     //----------------------------------------------------------------------------
+    // Флаги контрола
+
+    //------------------------------
     //! Установка всех флагов (assign). Возвращает старое значение флагов
     virtual ControlFlags setControlFlags(ControlFlags flags) override
     {
