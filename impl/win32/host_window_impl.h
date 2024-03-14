@@ -53,12 +53,6 @@ public:
     {
     }
 
-    virtual bool isValid() const override
-    {
-        auto hWnd = getHwnd();
-        return hWnd!=0 && (::IsWindow(hWnd)?true:false);
-    }
-
     void setMsgHandled(BOOL bHandled = TRUE)
     {
         static_cast<TParent*>(this)->SetMsgHandled(bHandled);
@@ -73,6 +67,13 @@ public:
     {
         return static_cast<const TParent*>(this)->m_hWnd;
     }
+
+    virtual bool isValid() const override
+    {
+        auto hWnd = getHwnd();
+        return hWnd!=0 && (::IsWindow(hWnd)?true:false);
+    }
+
 
 protected:
 
