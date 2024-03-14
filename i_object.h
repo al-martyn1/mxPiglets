@@ -7,8 +7,9 @@
 #include "defs.h"
 
 //
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <utility>
 
 
 namespace mxPiglets {
