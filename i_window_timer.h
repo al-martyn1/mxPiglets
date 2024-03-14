@@ -1,24 +1,18 @@
 #pragma once
 
 #include "non_copyable_object.h"
-#include "enums.h"
 #include "i_comparable.h"
 
-
 //
-#include <memory>
-#include <cstdint>
 
 namespace mxPiglets {
 
 
-typedef    std::uint32_t    timeout_t;
 
 
 
 
 #include "warnings/push_disable_copy_ctor_implicitly_deleted.h"
-
 
 struct IWindowTimer : public NonCopyableObject
                     , public IComparable
@@ -38,7 +32,6 @@ struct IWindowTimer : public NonCopyableObject
     virtual timeout_t getTimeout() const = 0;
 
 }; // struct IWindowTimer
-
 
 #include "warnings/pop.h"
 

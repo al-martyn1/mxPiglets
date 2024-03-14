@@ -2,10 +2,7 @@
 
 #include "non_copyable_object.h"
 #include "i_comparable.h"
-#include "enums.h"
 
-//
-#include <memory>
 
 namespace mxPiglets {
 

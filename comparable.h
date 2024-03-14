@@ -1,20 +1,21 @@
 #pragma once
 
+#include "enums.h"
+//
+#include "types.h"
+//
+#include "defs.h"
+
+
 namespace mxPiglets {
 
-// Имеет метод Compare
+// Имеет метод compare
 // T должен иметь m_pImpl
 template<typename T>
-class Comparable //: public IComparable
+class Comparable
 {
 
 public:
-
-    // bool isNull() const
-    // {
-    //     auto pThisParent  = static_cast<const T*>(this);
-    //     return !pThisParent->m_pImpl ? true : false;
-    // }
 
     int compare(const Comparable &other) const
     {

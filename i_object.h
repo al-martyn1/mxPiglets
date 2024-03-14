@@ -1,5 +1,15 @@
 #pragma once
 
+#include "enums.h"
+//
+#include "types.h"
+//
+#include "defs.h"
+
+//
+#include <memory>
+#include <cstdint>
+
 
 namespace mxPiglets {
 

@@ -274,52 +274,35 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EMouseMoveEventType, std::map, 1 )
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EMouseMoveEventType, std::map, 1 )
 
 
-enum class KeyEventFlags : std::uint32_t
+enum class ControlFlags : std::uint32_t
 {
-    invalid            = (std::uint32_t)(-1),
-    unknown            = (std::uint32_t)(-1),
-    none               = 0x00,
-    noFlags            = 0x00,
-    extended           = 0x100,
-    extendedKey        = 0x100,
-    altDown            = 0x2000,
-    repeat             = 0x4000,
-    up                 = 0x8000,
-    prevKeyStateDown   = 0x10000,
-    keyDown            = 0x20000
+    invalid   = (std::uint32_t)(-1),
+    unknown   = (std::uint32_t)(-1),
+    none      = 0x00,
+    noFlags   = 0x00,
+    tabStop   = 0x01
 
-}; // enum class KeyEventFlags : std::uint32_t
+}; // enum class ControlFlags : std::uint32_t
 
-MARTY_CPP_MAKE_ENUM_FLAGS(KeyEventFlags)
+MARTY_CPP_MAKE_ENUM_FLAGS(ControlFlags)
 
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( KeyEventFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::keyDown            , "KeyDown"          );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::up                 , "Up"               );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::altDown            , "AltDown"          );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::extended           , "Extended"         );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::invalid            , "Invalid"          );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::none               , "None"             );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::repeat             , "Repeat"           );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( KeyEventFlags::prevKeyStateDown   , "PrevKeyStateDown" );
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( KeyEventFlags, std::map, 1 )
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::invalid   , "Invalid" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::none      , "None"    );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::tabStop   , "TabStop" );
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlFlags, std::map, 1 )
 
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( KeyEventFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::keyDown            , "keydown"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::up                 , "up"               );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::altDown            , "altdown"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::extended           , "extended"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::extended           , "extendedkey"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::invalid            , "invalid"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::invalid            , "unknown"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::none               , "none"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::none               , "noflags"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::repeat             , "repeat"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( KeyEventFlags::prevKeyStateDown   , "prevkeystatedown" );
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( KeyEventFlags, std::map, 1 )
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid   , "invalid" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid   , "unknown" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none      , "none"    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none      , "noflags" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::tabStop   , "tabstop" );
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlFlags, std::map, 1 )
 
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(KeyEventFlags, std::set)
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlFlags, std::set)
 
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(KeyEventFlags, std::set)
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(ControlFlags, std::set)
 
 } // namespace mxPiglets
 

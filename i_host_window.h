@@ -3,9 +3,6 @@
 #include "marty_draw_context/i_draw_context.h"
 #include "marty_draw_context/i_image_list.h"
 
-//
-#include "types.h"
-//
 #include "non_copyable_object.h"
 #include "cursor.h"
 #include "window_timer.h"

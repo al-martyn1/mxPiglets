@@ -3,7 +3,6 @@
 #include "i_cursor.h"
 #include "comparable.h"
 #include "checked_pimpl.h"
-#include "defs.h"
 
 
 

@@ -1,15 +1,8 @@
 #pragma once
 
 #include "non_copyable_object.h"
-#include "enums.h"
 #include "i_comparable.h"
 
-// for timeout_t
-#include "i_window_timer.h"
-
-//
-#include <memory>
-#include <cstdint>
 
 namespace mxPiglets {
 
