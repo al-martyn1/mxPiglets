@@ -121,14 +121,27 @@ CanvasCoordValue distance(const CanvasCoords& c1, const CanvasCoords& c2)
 
 
 //----------------------------------------------------------------------------
-typedef    std::uint32_t    timeout_t;
+using timeout_t = std::uint32_t;
+
+//----------------------------------------------------------------------------
+#if defined(WIN32) || defined(_WIN32)
+
+    using String = std::wstring;
+
+#else // Linups and others
+
+    using String = std::wstring;
+
+#endif
+
+using Char = String::value_type;
 
 //----------------------------------------------------------------------------
 
 
 
 //----------------------------------------------------------------------------
-struct Point
+struct WindowPoint
 {
     int x = 0;
     int y = 0;
@@ -137,21 +150,77 @@ struct Point
 
 
 
-struct Size
+struct WindowSize
 {
     int width  = 0;
     int height = 0;
 
-}; // struct Size
+}; // struct WindowSize
 
 
 
-struct Rect
+struct WindowRect
 {
     int x = 0;
     int y = 0;
     int width  = 0;
     int height = 0;
+
+    WindowRect() = default;
+    WindowRect(const WindowRect &) = default;
+    WindowRect& operator=(const WindowRect &) = default;
+    WindowRect(WindowRect &&) = default;
+    WindowRect& operator=(WindowRect &&) = default;
+
+    WindowRect(int x_, int y_, int width_, int height_)
+    : x(x_)
+    , y(y_)
+    , width (width_ )
+    , height(height_)
+    {}
+
+    WindowRect(WindowPoint pos, WindowSize size)
+    : x(pos.x)
+    , y(pos.y)
+    , width (size.width )
+    , height(size.height)
+    {}
+
+    WindowPoint getPos() const
+    {
+        return WindowPoint{x,y};
+    }
+
+    WindowSize getSize() const
+    {
+        return WindowSize{width,height};
+    }
+
+}; // struct WindowRect
+
+
+
+
+// Координаты и размеры, которыми оперируют контролы
+
+using CoordValue  = CanvasCoordValue;
+using Point       = CanvasPoint     ;
+
+
+
+struct Size
+{
+    CoordValue width  = 0;
+    CoordValue height = 0;
+};
+
+
+struct Rect
+{
+    CoordValue    x = 0;
+    CoordValue    y = 0;
+    CoordValue    width  = 0;
+    CoordValue    height = 0;
 
     Rect() = default;
     Rect(const Rect &) = default;
@@ -159,7 +228,7 @@ struct Rect
     Rect(Rect &&) = default;
     Rect& operator=(Rect &&) = default;
 
-    Rect(int x_, int y_, int width_, int height_)
+    Rect(CoordValue x_, CoordValue y_, CoordValue width_, CoordValue height_)
     : x(x_)
     , y(y_)
     , width (width_ )
@@ -184,9 +253,6 @@ struct Rect
     }
 
 }; // struct Rect
-
-
-
 
 
 
