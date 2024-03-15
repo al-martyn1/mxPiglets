@@ -7,12 +7,13 @@
 
 namespace mxPiglets {
 
-struct IWindowTimer : 
                     
 
 struct IControl : public NonCopyableObject
                 , public IComparable
 {
+
+    MX_PIGLETS_IMPLEMENT_CLASS_COPY_OPS_DELETE(IControl);
 
     //------------------------------
     // HostWindow
@@ -29,6 +30,13 @@ struct IControl : public NonCopyableObject
     virtual IHostWindow*       getHostWindow() = 0;
     virtual const IHostWindow* getHostWindow() const = 0;
     virtual IHostWindow*       setHostWindow(IHostWindow* phw) = 0; //!< Возвращает старый указатель IHostWindow*
+
+
+    //------------------------------
+    // Имя типа и класса - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
+    virtual String getControlTypeString() const = 0;
+    virtual String getControlClassString() const = 0;
+    virtual String setControlClassString(String clsString) = 0;
 
 
     //------------------------------
@@ -53,9 +61,40 @@ struct IControl : public NonCopyableObject
 
     // Хелперы для флагов
 
-    bool getControlFlagTabStop() const = 0; //!< Получение значения флага ControlFlags::tabStop
-    bool setControlFlagTabStop(bool f) = 0; //!< Установка значения флага ControlFlags::tabStop
+    virtual bool getControlFlagTabStop() const = 0; //!< Получение значения флага ControlFlags::tabStop
+    virtual bool setControlFlagTabStop(bool f) = 0; //!< Установка значения флага ControlFlags::tabStop
 
+
+    //------------------------------
+    // Положение и координаты - относительно родителя
+
+    virtual Point getPosition() const = 0;
+    virtual Point setPosition(Point newPos) = 0;
+
+    virtual Size  getSize() const = 0;
+    virtual Size  setSize(Size newSize) = 0;
+
+    virtual Rect  getBounds() const = 0;
+    virtual Rect  setBounds(Rect r) = 0;
+
+    virtual CoordValue getLeft() const = 0;
+    virtual CoordValue setLeft(CoordValue v) = 0;
+
+    virtual CoordValue getTop() const = 0;
+    virtual CoordValue getTop(CoordValue v) = 0;
+
+    virtual CoordValue getWidth() const = 0;
+    virtual CoordValue setWidth(CoordValue v) = 0;
+
+    virtual CoordValue getHeight() const = 0;
+    virtual CoordValue getHeight(CoordValue v) = 0;
+
+    virtual CoordValue getRight() const = 0;
+    virtual CoordValue setRight(CoordValue v) = 0;
+
+    virtual CoordValue getBottom() const = 0;
+    virtual CoordValue getBottom(CoordValue v) = 0;
+    
 
 
 }; // struct IControl

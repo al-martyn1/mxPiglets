@@ -15,8 +15,16 @@ protected:
     IHostWindow*         m_pHostWindow      = 0;
     ControlFlags         m_controlFlags     = ControlFlags::none;
 
+    String               m_controlClassString;
+
+    Point                m_position;
+    Size                 m_size;
+
 
 public:
+
+
+    MX_PIGLETS_IMPLEMENT_CLASS_COPY_OPS_DELETE(IControlImplBase);
 
     //----------------------------------------------------------------------------
     // Контролы сравнивать имеет смысл только по адресу объекта
@@ -52,13 +60,31 @@ public:
 
 
     //----------------------------------------------------------------------------
+    virtual String getControlTypeString() const override
+    {
+        return make_string<String>("Control");
+    }
+
+    virtual String getControlClassString() const override
+    {
+        return m_controlClassString;
+    }
+
+    virtual String setControlClassString(String clsString) override
+    {
+        return std::exchange(m_controlClassString, clsString);
+    }
+    
+
+
+    //----------------------------------------------------------------------------
     // Флаги контрола
 
     //------------------------------
     //! Установка всех флагов (assign). Возвращает старое значение флагов
     virtual ControlFlags setControlFlags(ControlFlags flags) override
     {
-        return std::excange(m_controlFlags,flags);
+        return std::exchange(m_controlFlags,flags);
     }
 
     //------------------------------
@@ -89,20 +115,124 @@ public:
     //----------------------------------------------------------------------------
     // Хелперы для флагов
 
-    bool getControlFlagTabStop() const override //!< Получение значения флага ControlFlags::tabStop
+    virtual bool getControlFlagTabStop() const override //!< Получение значения флага ControlFlags::tabStop
     {
-        return getControlFlagsByMask(ControlFlags::tabStop) ? true : false;
+        return getControlFlagsByMask(ControlFlags::tabStop)==0 ? false : true;
     }
 
     //------------------------------
-    bool setControlFlagTabStop(bool f) override //!< Установка значения флага ControlFlags::tabStop
+    virtual bool setControlFlagTabStop(bool f) override //!< Установка значения флага ControlFlags::tabStop
     {
         auto prevFlags = f // Устанавливаем?
-                       ? setResetControlFlags(ControlFlags::tabStop, 0                    ) // устанавливаем без сброса
-                       : setResetControlFlags(0                    , ControlFlags::tabStop) // сбрасываем без установки
+                       ? setResetControlFlags(ControlFlags::tabStop, ControlFlags::none   ) // устанавливаем без сброса
+                       : setResetControlFlags(ControlFlags::none   , ControlFlags::tabStop) // сбрасываем без установки
                        ;
-        return (prevFlags & ControlFlags::tabStop) ? true : false;
+        return (prevFlags & ControlFlags::tabStop)==0 ? false : true;
     }
+
+
+
+    //------------------------------
+    // Положение и координаты - относительно родителя
+
+    virtual Point getPosition() const override
+    {
+        return m_position;
+    }
+
+    virtual Point setPosition(Point newPos) override
+    {
+        return std::exchange(m_position, newPos);
+    }
+
+    virtual Size  getSize() const override
+    {
+        return m_size;
+    }
+
+    virtual Size  setSize(Size newSize) override
+    {
+        return std::exchange(m_size, newSize);
+    }
+
+    virtual Rect  getBounds() const override
+    {
+        return Rect(m_position, m_size);
+    }
+
+    virtual Rect  setBounds(Rect r) override
+    {
+        Rect res   = getBounds();
+        m_position = r.getPos();
+        m_size     = r.getSize();
+        return res;
+    }
+
+    virtual CoordValue getLeft() const override
+    {
+        return m_position.x;
+    }
+
+    virtual CoordValue setLeft(CoordValue v) override
+    {
+        return std::exchange(m_position.x, v);
+    }
+
+    virtual CoordValue getTop() const override
+    {
+        return m_position.y;
+    }
+
+    virtual CoordValue getTop(CoordValue v) override
+    {
+        return std::exchange(m_position.y, v);
+    }
+
+    virtual CoordValue getWidth() const override
+    {
+        return m_size.width;
+    }
+
+    virtual CoordValue setWidth(CoordValue v) override
+    {
+        return std::exchange(m_size.width, v);
+    }
+
+    virtual CoordValue getHeight() const override
+    {
+        return m_size.height;
+    }
+
+    virtual CoordValue getHeight(CoordValue v) override
+    {
+        return std::exchange(m_size.height, v);
+    }
+
+    virtual CoordValue getRight() const override
+    {
+        return m_position.x + m_size.width;
+    }
+
+    virtual CoordValue setRight(CoordValue v) override
+    {
+        auto res = getRight();
+        m_size.width = v - m_position.x;
+        return res;
+    }
+
+    virtual CoordValue getBottom() const override
+    {
+        return m_position.y + m_size.height;
+    }
+
+    virtual CoordValue getBottom(CoordValue v) override
+    {
+        auto res = getRight();
+        m_size.height = v - m_position.x;
+        return res;
+    }
+
+
 
 
 
