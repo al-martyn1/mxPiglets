@@ -46,9 +46,9 @@ protected:
 
     virtual void onWindowKeyEvent(marty_vk::KeyEventFlags keyEventFlags, marty_vk::VkCode vkCode, std::uint32_t nRepCnt) = 0;
 
-    virtual void onWindowMouseButtonEvents( MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
-    virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const Point &point) = 0;
-    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const Point &point) = 0;
+    virtual void onWindowMouseButtonEvents( MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) = 0;
+    virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) = 0;
+    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const WindowPoint &point) = 0;
 
 public:
 
@@ -60,19 +60,19 @@ public:
     virtual bool   showCursor(bool bShow) = 0;
 
     // In window client area coords
-    virtual Point getWindowCursorPos() const = 0;
-    virtual bool  setWindowCursorPos(Point pos) const = 0;
+    virtual WindowPoint getWindowCursorPos() const = 0;
+    virtual bool  setWindowCursorPos(WindowPoint pos) const = 0;
 
     // window client area coords
-    virtual Size getWindowClientSize() const = 0;
+    virtual WindowSize getWindowClientSize() const = 0;
 
     virtual bool setWindowMouseCapture() = 0; // return mouse previously captured or not
     virtual bool clrWindowMouseCapture() = 0;
     virtual bool isMouseCaptured() const = 0; // any window
     virtual bool isWindowMouseCaptured() const = 0; // this window
 
-    virtual Size getDialogBaseUnits() const = 0;
-    virtual Size mapDbuSizeToPixelSize(Size size) const = 0;
+    virtual WindowSize getDialogBaseUnits() const = 0;
+    virtual WindowSize mapDbuSizeToPixelSize(WindowSize size) const = 0;
 
 
     // virtual marty_draw_context::DrawSize getDialigBaseUnits() override

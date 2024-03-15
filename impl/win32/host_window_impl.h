@@ -274,20 +274,20 @@ protected:
         setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
         forceProcessWmTimerMessages();
         MouseButtonStateFlags mbStateFlags = (MouseButtonStateFlags)nFlags;
-        onWindowMouseWheel(mbStateFlags, (int)zDelta, Point{(int)point.x,(int)point.y}); // ? TRUE : FALSE;
+        onWindowMouseWheel(mbStateFlags, (int)zDelta, WindowPoint{(int)point.x,(int)point.y}); // ? TRUE : FALSE;
         return TRUE;
     }
 
     void OnMouseHover(WPARAM wParam /* MK_* */ , CPoint point)
     {
         m_bMouseTracking = false;
-        OnMouseMoveEvents(MouseMoveEventType::hover, (MouseButtonStateFlags)wParam, Point{(int)point.x,(int)point.y});
+        OnMouseMoveEvents(MouseMoveEventType::hover, (MouseButtonStateFlags)wParam, WindowPoint{(int)point.x,(int)point.y});
     }
 
     void OnMouseLeave()
     {
         m_bMouseTracking = false;
-        OnMouseMoveEvents(MouseMoveEventType::leave, MouseButtonStateFlags::none, Point{0,0});
+        OnMouseMoveEvents(MouseMoveEventType::leave, MouseButtonStateFlags::none, WindowPoint{0,0});
     }
 
     // https://learn.microsoft.com/en-us/windows/win32/gdi/drawing-with-the-mouse
@@ -298,29 +298,29 @@ protected:
             trackMouseEvent();
         }
 
-        OnMouseMoveEvents(MouseMoveEventType::move, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y});
+        OnMouseMoveEvents(MouseMoveEventType::move, (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y});
     }
 
 
-    void OnLButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnLButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnLButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnRButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnRButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnRButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnMButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnMButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
-    void OnMButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, Point{(int)point.x,(int)point.y} ); }
+    void OnLButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnLButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnLButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::leftButton  , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnRButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnRButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnRButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::rightButton , MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnMButtonDown(UINT nFlags, CPoint point)   { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::pressed    , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnMButtonUp(UINT nFlags, CPoint point)     { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::released   , (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
+    void OnMButtonDblClk(UINT nFlags, CPoint point) { OnMouseButtonEvents( MouseButton::middleButton, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)nFlags, WindowPoint{(int)point.x,(int)point.y} ); }
 
     void OnXButtonDown(int fwButton, int dwKeys, CPoint point)
     {
         if (fwButton&XBUTTON1)
         {
-            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
         if (fwButton&XBUTTON2)
         {
-            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::pressed    , (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
     }
 
@@ -328,11 +328,11 @@ protected:
     {
         if (fwButton&XBUTTON1)
         {
-            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
         if (fwButton&XBUTTON2)
         {
-            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::released   , (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
     }
 
@@ -340,18 +340,18 @@ protected:
     {
         if (fwButton&XBUTTON1)
         {
-            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton1, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
         if (fwButton&XBUTTON2)
         {
-            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, Point{(int)point.x,(int)point.y} );
+            OnMouseButtonEvents( MouseButton::xButton2, MouseButtonEvent::doubleClick, (MouseButtonStateFlags)dwKeys, WindowPoint{(int)point.x,(int)point.y} );
         }
     }
 
     void OnMouseButtonEvents( MouseButton           mouseButton
                             , MouseButtonEvent      buttonEvent
                             , MouseButtonStateFlags mbStateFlags
-                            , const Point &point
+                            , const WindowPoint &point
                             )
     {
         setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
@@ -361,7 +361,7 @@ protected:
 
     void OnMouseMoveEvents( MouseMoveEventType    moveEventType
                           , MouseButtonStateFlags mbStateFlags
-                          , const Point &point
+                          , const WindowPoint &point
                           )
     {
         setMsgHandled(FALSE); // Пусть продолжает обработку, мало ли, кто-то ещё захочет обработать эти события
@@ -388,7 +388,7 @@ protected:
     {
     }
 
-    virtual void onWindowMouseButtonEvents(MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const Point &point) override
+    virtual void onWindowMouseButtonEvents(MouseButton mouseButton, MouseButtonEvent buttonEvent, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) override
     {
         MARTY_ARG_USED(mouseButton);
         MARTY_ARG_USED(buttonEvent);
@@ -396,14 +396,14 @@ protected:
         MARTY_ARG_USED(point);
     }
 
-    virtual void onWindowMouseMoveEvents(MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const Point &point) override
+    virtual void onWindowMouseMoveEvents(MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) override
     {
         MARTY_ARG_USED(moveEventType);
         MARTY_ARG_USED(mbStateFlags);
         MARTY_ARG_USED(point);
     }
 
-    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const Point &point) override
+    virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const WindowPoint &point) override
     {
         MARTY_ARG_USED(mbStateFlags);
         MARTY_ARG_USED(zDelta);
@@ -495,7 +495,7 @@ public:
 protected:
 
     static
-    POINT p2p(Point p)
+    POINT p2p(WindowPoint p)
     {
         POINT pntRes;
         pntRes.x = (LONG)p.x;
@@ -504,15 +504,15 @@ protected:
     }
 
     static
-    Point p2p(POINT p)
+    WindowPoint p2p(POINT p)
     {
-        Point pntRes;
+        WindowPoint pntRes;
         pntRes.x = (int)p.x;
         pntRes.y = (int)p.y;
         return pntRes;
     }
 
-    Point screenToWindowClientAreaPos(Point pos) const
+    WindowPoint screenToWindowClientAreaPos(WindowPoint pos) const
     {
         POINT p = p2p(pos);
 
@@ -526,7 +526,7 @@ protected:
         return p2p(p);
     }
 
-    Point windowClientAreaToScreenPos(Point pos) const
+    WindowPoint windowClientAreaToScreenPos(WindowPoint pos) const
     {
         POINT p = p2p(pos);
 
@@ -544,7 +544,7 @@ protected:
 public:
 
     // In window client area coords
-    virtual Point getWindowCursorPos() const override
+    virtual WindowPoint getWindowCursorPos() const override
     {
         POINT pos{0,0};
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getcursorpos
@@ -556,7 +556,7 @@ public:
         return screenToWindowClientAreaPos(p2p(pos));
     }
 
-    virtual bool  setWindowCursorPos(Point pos) const override
+    virtual bool  setWindowCursorPos(WindowPoint pos) const override
     {
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos
         auto screenPos = p2p(windowClientAreaToScreenPos(pos));
@@ -564,7 +564,7 @@ public:
     }
 
     // window client area coords
-    virtual Size getWindowClientSize() const override
+    virtual WindowSize getWindowClientSize() const override
     {
         RECT r{0,0,0,0}; // https://learn.microsoft.com/en-us/windows/win32/api/windef/ns-windef-rect
         if (!::GetClientRect(getHwnd(), &r))
@@ -572,7 +572,7 @@ public:
             throw std::runtime_error("HostWindow::getClientSize: GetCursorPos failed");
         }
 
-        Size szRes;
+        WindowSize szRes;
         szRes.width  = (int)(r.right-r.left);
         szRes.height = (int)(r.bottom-r.top);
 
@@ -613,7 +613,7 @@ public:
         return hwndCapture==getHwnd();
     }
 
-    virtual Size getDialogBaseUnits() const override
+    virtual WindowSize getDialogBaseUnits() const override
     {
          long dbu = ::GetDialogBaseUnits();
       
@@ -622,16 +622,16 @@ public:
          int cx = (int)LOWORD(dbu);
          int cy = (int)HIWORD(dbu);
 
-         return Size{cx,cy};
+         return WindowSize{cx,cy};
     }
 
-    virtual Size mapDbuSizeToPixelSize(Size size) const override
+    virtual WindowSize mapDbuSizeToPixelSize(WindowSize size) const override
     {
-         Size dbu = getDialogBaseUnits();
+         WindowSize dbu = getDialogBaseUnits();
          auto pixelX = ::MulDiv(size.width , dbu.width , 4);
          auto pixelY = ::MulDiv(size.height, dbu.height, 8);
 
-         return Size{pixelX,pixelY};
+         return WindowSize{pixelX,pixelY};
     
     }
 
