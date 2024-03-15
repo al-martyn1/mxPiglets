@@ -19,6 +19,7 @@
 //
 #include "mxPiglets/impl/win32/host_window_impl.h"
 #include "mxPiglets/impl/win32/elapsed_timer_impl.h"
+#include "mxPiglets/i_control_impl_base.h"
 
 
 #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG(nFlags) (((nFlags)>>(30-16))&0x01)
@@ -86,7 +87,7 @@ public:
         using namespace umba::omanip;
 
         auto dbu = getDialogBaseUnits();
-        auto dbuScaledSize = mapDbuSizeToPixelSize(mxPiglets::Size{1,1});
+        auto dbuScaledSize = mapDbuSizeToPixelSize(mxPiglets::WindowSize{1,1});
         MARTY_ARG_USED(dbu);
         
 
