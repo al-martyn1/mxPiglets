@@ -1,11 +1,9 @@
 #pragma once
 
-#include "enums.h"
-//
-#include "types.h"
-//
 #include "defs.h"
-
+#include "enums.h"
+#include "types.h"
+#include "utils.h"
 //
 #include <cstdint>
 #include <memory>
