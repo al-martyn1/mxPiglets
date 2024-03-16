@@ -35,3 +35,5 @@
 /tests/_prj_msvc2019/*.user
 /tests/_prj_msvc2022/*.user
 /doxy
+/tmp
+/doxygen.log
