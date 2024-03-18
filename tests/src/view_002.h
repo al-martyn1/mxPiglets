@@ -14,6 +14,7 @@
 //
 #include "marty_dc_impl_win32/gdi_draw_context.h"
 #include "marty_dc_impl_win32/gdiplus_draw_context.h"
+#include "marty_draw_context/offset_dc.h"
 //
 #include <array>
 //
@@ -265,7 +266,11 @@ public:
 
         auto startTick = umba::time_service::getCurTimeMs();
 
-        DoPaintImpl(pDc);
+        auto offsetDc = marty_draw_context::OffsetDc(pDc, marty_draw_context::DrawCoord{10,10});
+        IDrawContext *pOffsetDc = &offsetDc;
+
+        //DoPaintImpl(pDc);
+        DoPaintImpl(pOffsetDc);
 
         auto endTick = umba::time_service::getCurTimeMs();
 
