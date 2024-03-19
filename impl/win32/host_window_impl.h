@@ -37,13 +37,15 @@ class HostWindowImpl : public TParent
                      , public IHostWindow
 {
 
-    mutable UINT_PTR    m_curTimerId          = 1; // Переделать на атомики???
-    bool                m_bMouseTracking      = false;
+    mutable UINT_PTR                          m_curTimerId          = 1; // Переделать на атомики???
+    bool                                      m_bMouseTracking      = false;
     //bool                m_mouseCaptured       = false;
 
     // Чтобы постоянно думми не создавать, создадим заранее всё, что нужно, в OnCreate, а в OnTimer просто будем менять идентификатор таймера
     mutable std::shared_ptr<WindowTimerImpl>  m_pWindowTimerImplForOnTimer;
     mutable std::shared_ptr<IWindowTimer>     m_pIWindowTimerForOnTimer;
+
+    mutable taborder_t                        m_autoTabOrderCounter = 0;
     
 
 
@@ -447,7 +449,27 @@ protected:
     // Виртуальные методы
     //------------------------------
 
+    virtual taborder_t getAutoTabOrderIncrement() const override
+    {
+        return tabOrderDefAutoIncrement ? tabOrderDefAutoIncrement : 1;
+    }
+
+
+    
+
 public:
+
+    virtual taborder_t getAutoTabOrder() const override
+    {
+        if (m_autoTabOrderCounter==0)
+        {
+            m_autoTabOrderCounter = getAutoTabOrderIncrement();
+            return m_autoTabOrderCounter;
+        }
+
+        m_autoTabOrderCounter += getAutoTabOrderIncrement();
+        return m_autoTabOrderCounter;
+    }
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const override
     {

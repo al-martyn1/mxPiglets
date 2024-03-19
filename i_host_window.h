@@ -50,9 +50,14 @@ protected:
     virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) = 0;
     virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const WindowPoint &point) = 0;
 
+    virtual taborder_t getAutoTabOrderIncrement() const = 0;
+
+
 public:
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
+
+    virtual taborder_t getAutoTabOrder() const = 0;
 
     virtual Cursor createStockCursor(EStockCursor cursorKind) const = 0;
     virtual Cursor setCursor(Cursor cursor) = 0;
@@ -73,6 +78,7 @@ public:
 
     virtual WindowSize getDialogBaseUnits() const = 0;
     virtual WindowSize mapDbuSizeToPixelSize(WindowSize size) const = 0;
+
 
 
     // virtual marty_draw_context::DrawSize getDialigBaseUnits() override
