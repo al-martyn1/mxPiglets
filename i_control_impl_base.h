@@ -12,10 +12,14 @@ struct IControlImplBase : public IControl
 
 protected:
 
-    IHostWindow*         m_pHostWindow      = 0;
-    ControlFlags         m_controlFlags     = ControlFlags::none;
+    IHostWindow*         m_pHostWindow          = 0;
+    ControlFlags         m_controlFlags         = ControlFlags::none;
 
-    String               m_controlClassString;
+    String               m_controlText;
+    String               m_controlTypeString;
+    String               m_controlStyleString;
+    String               m_controlIdString;
+    taborder_t           m_controlTabOrder      = tabOrderInvalid;
 
     Point                m_position;
     Size                 m_size;
@@ -55,26 +59,74 @@ public:
 
     virtual IHostWindow*       setHostWindow(IHostWindow* phw) override //!< Возвращает старый указатель IHostWindow*
     {
+        // Также тут надо удалить контрол из текущего хост окна, если задано.
+
+        // Надо также установить хост всем детям, если текущий m_pHostWindow равен нулю
+        // При этом также надо задать taborder всем детям, которым требуется.
+        // Такое поведение нужно, когда мы создаём групповой контрол, например, панель, и добавляем туда другие контролы, и собираемся это всё переиспользовать как отдельный контрол
+        // Но это надо обдумать
+
+        // После установки таб ордера добавляем контрол в хост окно
+
         return std::exchange(m_pHostWindow, phw);
     }
 
-
-    //----------------------------------------------------------------------------
-    virtual String getControlTypeString() const override
+    //------------------------------
+    // Текст контрола - заголовок/метка, или содержимое (редактора) - зависит от типа контрола
+    virtual String getControlText() const override    //!< Получение текста контрола. Способ использования текста зависит от типа контрола
     {
-        return make_string<String>("Control");
+        return m_controlText;
     }
 
-    virtual String getControlClassString() const override
+    virtual void setControlText(String text) override //!< Установка текста контрола. Способ использования текста зависит от типа контрола
     {
-        return m_controlClassString;
+        m_controlText = text;
     }
 
-    virtual String setControlClassString(String clsString) override
+    //------------------------------
+    // TabOrder
+    virtual taborder_t getControlTabOrder() const override
     {
-        return std::exchange(m_controlClassString, clsString);
+        return m_controlTabOrder;
+    }
+
+    virtual taborder_t setControlTabOrder(taborder_t newTabOrder) override
+    {
+        return std::exchange(m_controlTabOrder, newTabOrder);
     }
     
+
+    //------------------------------
+    // Имя типа, стиля, состояния, id - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
+    virtual String getControlTypeString() const override  //!< Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
+    {
+        return m_controlTypeString;
+    }
+
+    virtual String getControlStateString() const override //!< Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+    {
+        return make_string<String>("default");
+    }
+
+    virtual String getControlStyleString() const override //!< Возвращает имя стиля контрола
+    {
+        return m_controlStyleString;
+    }
+
+    virtual void setControlStyleString(String styString) override //!< Задаёт имя стиля контрола
+    {
+        m_controlStyleString = styString;
+    }
+
+    virtual String getControIdString() const override //!< Возвращает идентификатор контрола
+    {
+        return m_controlIdString;
+    }
+
+    virtual void setControlIdString(String idString) override //!< Задаёт идентификатор контрола
+    {
+        m_controlIdString = idString;
+    }
 
 
     //----------------------------------------------------------------------------
@@ -112,8 +164,8 @@ public:
     }
 
 
-    //----------------------------------------------------------------------------
-    // Хелперы для флагов
+    //------------------------------
+    // Обёртки для конкретных флагов
 
     virtual bool getControlFlagTabStop() const override //!< Получение значения флага ControlFlags::tabStop
     {

@@ -33,10 +33,26 @@ struct IControl : public NonCopyableObject
 
 
     //------------------------------
-    // Имя типа и класса - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
-    virtual String getControlTypeString() const = 0;
-    virtual String getControlClassString() const = 0;
-    virtual String setControlClassString(String clsString) = 0;
+    // TabOrder
+    virtual taborder_t getControlTabOrder() const = 0;
+    virtual taborder_t setControlTabOrder(taborder_t newTabOrder) = 0;
+
+
+    //------------------------------
+    // Текст контрола - заголовок/метка, или содержимое (редактора) - зависит от типа контрола
+    virtual String getControlText() const = 0;    //!< Получение текста контрола. Способ использования текста зависит от типа контрола
+    virtual void setControlText(String text) = 0; //!< Установка текста контрола. Способ использования текста зависит от типа контрола
+
+    //------------------------------
+    // Имя типа, стиля, состояния, id - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
+    virtual String getControlTypeString() const = 0;  //!< Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
+    virtual String getControlStateString() const = 0; //!< Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+
+    virtual String getControlStyleString() const = 0; //!< Возвращает имя стиля контрола
+    virtual void setControlStyleString(String styString) = 0; //!< Задаёт имя стиля контрола
+
+    virtual String getControIdString() const = 0; //!< Возвращает идентификатор контрола
+    virtual void setControlIdString(String idString) = 0; //!< Задаёт идентификатор контрола
 
 
     //------------------------------
@@ -59,7 +75,8 @@ struct IControl : public NonCopyableObject
     virtual ControlFlags setResetControlFlags(ControlFlags setFlags, ControlFlags resetFlags) = 0;
 
 
-    // Хелперы для флагов
+    //------------------------------
+    // Обёртки для конкретных флагов
 
     virtual bool getControlFlagTabStop() const = 0; //!< Получение значения флага ControlFlags::tabStop
     virtual bool setControlFlagTabStop(bool f) = 0; //!< Установка значения флага ControlFlags::tabStop
