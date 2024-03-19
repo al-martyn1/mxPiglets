@@ -121,7 +121,16 @@ CanvasCoordValue distance(const CanvasCoords& c1, const CanvasCoords& c2)
 
 
 //----------------------------------------------------------------------------
-using timeout_t = std::uint32_t;
+using timeout_t  = std::uint32_t;
+
+
+using taborder_t = std::uint32_t;
+
+constexpr const taborder_t tabOrderAuto              = 0;
+constexpr const taborder_t tabOrderInvalid           = (taborder_t)-1; // не участвует в смене фокуса по табу
+constexpr const taborder_t tabOrderDefAutoIncrement  = 10;
+
+
 
 //----------------------------------------------------------------------------
 #if defined(WIN32) || defined(_WIN32)
