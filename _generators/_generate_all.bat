@@ -85,7 +85,7 @@
 @rem set KEYEVENTFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Extended,ExtendedKey=0x0100;AltDown=0x2000;Repeat=0x4000;Up=0x8000;prevKeyStateDown;keyDown
 
 @set CONTROLFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;TabStop
+@set CONTROLFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Group,GroupStart;TabStop;NeedTabs;CantOwnFocus,FocusLess
 
 
 @rem  %TPL_OVERRIDE%

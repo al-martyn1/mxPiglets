@@ -276,28 +276,41 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EMouseMoveEventType, std::map, 1 )
 
 enum class ControlFlags : std::uint32_t
 {
-    invalid   = (std::uint32_t)(-1),
-    unknown   = (std::uint32_t)(-1),
-    none      = 0x00,
-    noFlags   = 0x00,
-    tabStop   = 0x01
+    invalid        = (std::uint32_t)(-1),
+    unknown        = (std::uint32_t)(-1),
+    none           = 0x00,
+    noFlags        = 0x00,
+    group          = 0x01,
+    groupStart     = 0x01,
+    tabStop        = 0x02,
+    needTabs       = 0x04,
+    cantOwnFocus   = 0x08,
+    focusLess      = 0x08
 
 }; // enum class ControlFlags : std::uint32_t
 
 MARTY_CPP_MAKE_ENUM_FLAGS(ControlFlags)
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::invalid   , "Invalid" );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::none      , "None"    );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::tabStop   , "TabStop" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::invalid        , "Invalid"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "CantOwnFocus" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::none           , "None"         );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::tabStop        , "TabStop"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::group          , "Group"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::needTabs       , "NeedTabs"     );
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid   , "invalid" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid   , "unknown" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none      , "none"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none      , "noflags" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::tabStop   , "tabstop" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid        , "invalid"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid        , "unknown"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "cantownfocus" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "focusless"    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none           , "none"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none           , "noflags"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::tabStop        , "tabstop"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::group          , "group"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::group          , "groupstart"   );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::needTabs       , "needtabs"     );
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlFlags, std::set)
