@@ -84,11 +84,15 @@
 @rem set KEYEVENTFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
 @rem set KEYEVENTFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Extended,ExtendedKey=0x0100;AltDown=0x2000;Repeat=0x4000;Up=0x8000;prevKeyStateDown;keyDown
 
+@rem Флаг PaintTransparent - не рисует никакого фона
+@rem Флаг HitTransparent   - "прозрачен" для hitTest - на hitTest проверяются только дочерние контролы. Ставим для всяких панелей, layout'ов и подобных контролов.
+
 @set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLSTYLEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Group,GroupStart;TabStop;NeedTabs;CantOwnFocus,FocusLess
+@set CONTROLSTYLEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;PaintTransparent=1;HitTransparent=2;TransparentControl=3;Group,GroupStart=4;TabStop;NeedTabs;CantOwnFocus,FocusLess;userFirst=0x10000
+
 
 @set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLSTATEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;NeedRepaint,NeedRedraw
+@set CONTROLSTATEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;NeedRepaint,NeedRedraw;userFirst=0x10000
 
 
 @rem  %TPL_OVERRIDE%
