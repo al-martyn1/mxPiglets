@@ -12,17 +12,18 @@ struct IControlImplBase : public IControl
 
 protected:
 
-    IHostWindow*         m_pHostWindow          = 0;
-    ControlFlags         m_controlFlags         = ControlFlags::none;
+    IHostWindow*                 m_pHostWindow            = 0;
+    ControlStyleFlags            m_controlStyleFlags      = ControlStyleFlags::none;
+    mutable ControlStateFlags    m_controlStateFlags      = ControlStateFlags::none;
 
-    String               m_controlText;
-    String               m_controlTypeString;
-    String               m_controlStyleString;
-    String               m_controlIdString;
-    taborder_t           m_controlTabOrder      = tabOrderInvalid;
+    String                       m_controlText;
+    String                       m_controlTypeString;
+    String                       m_controlStyleString;
+    String                       m_controlIdString;
+    taborder_t                   m_controlTabOrder        = tabOrderInvalid;
 
-    Point                m_position;
-    Size                 m_size;
+    Point                        m_position;
+    Size                         m_size;
 
 
 public:
@@ -134,32 +135,32 @@ public:
 
     //------------------------------
     //! Установка всех флагов (assign). Возвращает старое значение флагов
-    virtual ControlFlags setControlFlags(ControlFlags flags) override
+    virtual ControlStyleFlags setControlStyleFlags(ControlStyleFlags flags) override
     {
-        return std::exchange(m_controlFlags,flags);
+        return std::exchange(m_controlStyleFlags,flags);
     }
 
     //------------------------------
     //! Получение всех флагов
-    virtual ControlFlags getControlFlags() const override
+    virtual ControlStyleFlags getControlStyleFlags() const override
     {
-        return m_controlFlags;
+        return m_controlStyleFlags;
     }
 
     //------------------------------
     //! Получение флагов по маске
-    virtual ControlFlags getControlFlagsByMask(ControlFlags mask) const override
+    virtual ControlStyleFlags getControlStyleFlagsByMask(ControlStyleFlags mask) const override
     {
-        return m_controlFlags & mask;
+        return m_controlStyleFlags & mask;
     }
 
     //------------------------------
     //! Сначала очищаются resetFlags-флаги (and), потом устанавливаются setFlags-флаги (or). Возвращает старое значение флагов
-    virtual ControlFlags setResetControlFlags(ControlFlags setFlags, ControlFlags resetFlags) override
+    virtual ControlStyleFlags setResetControlStyleFlags(ControlStyleFlags setFlags, ControlStyleFlags resetFlags) override
     {
-        ControlFlags res = m_controlFlags;
-        m_controlFlags &= ~resetFlags;
-        m_controlFlags |= setFlags;
+        ControlStyleFlags res = m_controlStyleFlags;
+        m_controlStyleFlags &= ~resetFlags;
+        m_controlStyleFlags |= setFlags;
         return res;
     }
 
@@ -167,22 +168,92 @@ public:
     //------------------------------
     // Обёртки для конкретных флагов
 
-    virtual bool getControlFlagTabStop() const override //!< Получение значения флага ControlFlags::tabStop
+    virtual bool getControlStyleFlagTabStop() const override //!< Получение значения флага ControlStyleFlags::tabStop
     {
-        return getControlFlagsByMask(ControlFlags::tabStop)==0 ? false : true;
+        return getControlStyleFlagsByMask(ControlStyleFlags::tabStop)==0 ? false : true;
     }
 
     //------------------------------
-    virtual bool setControlFlagTabStop(bool f) override //!< Установка значения флага ControlFlags::tabStop
+    virtual bool setControlStyleFlagTabStop(bool f) override //!< Установка значения флага ControlStyleFlags::tabStop
     {
         auto prevFlags = f // Устанавливаем?
-                       ? setResetControlFlags(ControlFlags::tabStop, ControlFlags::none   ) // устанавливаем без сброса
-                       : setResetControlFlags(ControlFlags::none   , ControlFlags::tabStop) // сбрасываем без установки
+                       ? setResetControlStyleFlags(ControlStyleFlags::tabStop, ControlStyleFlags::none   ) // устанавливаем без сброса
+                       : setResetControlStyleFlags(ControlStyleFlags::none   , ControlStyleFlags::tabStop) // сбрасываем без установки
                        ;
-        return (prevFlags & ControlFlags::tabStop)==0 ? false : true;
+        return (prevFlags & ControlStyleFlags::tabStop)==0 ? false : true;
     }
 
 
+
+
+    //------------------------------
+    // Флаги состояния контрола, аналогично флагам стиля
+    //------------------------------
+    //! Установка всех флагов (assign). Возвращает старое значение флагов
+    virtual ControlStateFlags setControlStateFlags(ControlStateFlags flags) override
+    {
+        return std::exchange(m_controlStateFlags,flags);
+    }
+
+    //------------------------------
+    //! Получение всех флагов
+    virtual ControlStateFlags getControlStateFlags() const override
+    {
+        return m_controlStateFlags;
+    }
+
+    //------------------------------
+    //! Получение флагов по маске
+    virtual ControlStateFlags getControlStateFlagsByMask(ControlStateFlags mask) const override
+    {
+        return m_controlStateFlags & mask;
+    }
+
+    //------------------------------
+    //! Сначала очищаются resetFlags-флаги (and), потом устанавливаются setFlags-флаги (or). Возвращает старое значение флагов
+    virtual ControlStateFlags setResetControlStateFlags(ControlStateFlags setFlags, ControlStateFlags resetFlags) override
+    {
+        ControlStateFlags res = m_controlStateFlags;
+        m_controlStateFlags &= ~resetFlags;
+        m_controlStateFlags |= setFlags;
+        return res;
+    }
+
+
+    //------------------------------
+    // Обёртки для конкретных флагов
+
+    virtual bool getControlStateFlagNeedRepaint() const override //!< Получение значения флага ControlStateFlags::needRepaint
+    {
+        return getControlStateFlagsByMask(ControlStateFlags::needRepaint)==0 ? false : true;
+    }
+
+    virtual bool setControlStateFlagNeedRepaint(bool f) override //!< Установка значения флага ControlStateFlags::needRepaint
+    {
+        auto prevFlags = f // Устанавливаем?
+                       ? setResetControlStateFlags(ControlStateFlags::needRepaint, ControlStateFlags::none   ) // устанавливаем без сброса
+                       : setResetControlStateFlags(ControlStateFlags::none       , ControlStateFlags::needRepaint) // сбрасываем без установки
+                       ;
+        return (prevFlags & ControlStateFlags::needRepaint)==0 ? false : true;
+    }
+
+    // //------------------------------
+    // // Обёртки для конкретных флагов
+    //  
+    // virtual bool getControlStyleFlagTabStop() const override //!< Получение значения флага ControlStyleFlags::tabStop
+    // {
+    //     return getControlStyleFlagsByMask(ControlStyleFlags::tabStop)==0 ? false : true;
+    // }
+    //  
+    // //------------------------------
+    // virtual bool setControlStyleFlagTabStop(bool f) override //!< Установка значения флага ControlStyleFlags::tabStop
+    // {
+    //     auto prevFlags = f // Устанавливаем?
+    //                    ? setResetControlStyleFlags(ControlStyleFlags::tabStop, ControlStyleFlags::none   ) // устанавливаем без сброса
+    //                    : setResetControlStyleFlags(ControlStyleFlags::none   , ControlStyleFlags::tabStop) // сбрасываем без установки
+    //                    ;
+    //     return (prevFlags & ControlStyleFlags::tabStop)==0 ? false : true;
+    // }
 
     //------------------------------
     // Положение и координаты - относительно родителя

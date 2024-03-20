@@ -56,30 +56,54 @@ struct IControl : public NonCopyableObject
 
 
     //------------------------------
-    // Флаги контрола
+    // Флаги стиля контрола
 
     // Флаги храним в одном слове - смысл разносить по отдельным bool переменым?
     // Зато можно получить/установить/изменить сразу пачкой по маске
     // Для удобства для каждого флага будут хелперы
 
     //! Установка всех флагов (assign). Возвращает старое значение флагов
-    virtual ControlFlags setControlFlags(ControlFlags flags) = 0;
+    virtual ControlStyleFlags setControlStyleFlags(ControlStyleFlags flags) = 0;
 
     //! Получение всех флагов
-    virtual ControlFlags getControlFlags() const = 0;
+    virtual ControlStyleFlags getControlStyleFlags() const = 0;
 
     //! Получение флагов по маске
-    virtual ControlFlags getControlFlagsByMask(ControlFlags mask) const = 0;
+    virtual ControlStyleFlags getControlStyleFlagsByMask(ControlStyleFlags mask) const = 0;
 
     //! Сначала очищаются resetFlags-флаги (and), потом устанавливаются setFlags-флаги (or). Возвращает старое значение флагов
-    virtual ControlFlags setResetControlFlags(ControlFlags setFlags, ControlFlags resetFlags) = 0;
+    virtual ControlStyleFlags setResetControlStyleFlags(ControlStyleFlags setFlags, ControlStyleFlags resetFlags) = 0;
 
 
     //------------------------------
     // Обёртки для конкретных флагов
 
-    virtual bool getControlFlagTabStop() const = 0; //!< Получение значения флага ControlFlags::tabStop
-    virtual bool setControlFlagTabStop(bool f) = 0; //!< Установка значения флага ControlFlags::tabStop
+    virtual bool getControlStyleFlagTabStop() const = 0; //!< Получение значения флага ControlStyleFlags::tabStop
+    virtual bool setControlStyleFlagTabStop(bool f) = 0; //!< Установка значения флага ControlStyleFlags::tabStop
+
+
+    //------------------------------
+    // Флаги состояния контрола, аналогично флагам стиля
+    //! Установка всех флагов (assign). Возвращает старое значение флагов
+    virtual ControlStateFlags setControlStateFlags(ControlStateFlags flags) = 0;
+
+    //! Получение всех флагов
+    virtual ControlStateFlags getControlStateFlags() const = 0;
+
+    //! Получение флагов по маске
+    virtual ControlStateFlags getControlStateFlagsByMask(ControlStateFlags mask) const = 0;
+
+    //! Сначала очищаются resetFlags-флаги (and), потом устанавливаются setFlags-флаги (or). Возвращает старое значение флагов
+    virtual ControlStateFlags setResetControlStateFlags(ControlStateFlags setFlags, ControlStateFlags resetFlags) = 0;
+
+
+    //------------------------------
+    // Обёртки для конкретных флагов
+
+    virtual bool getControlStateFlagNeedRepaint() const = 0; //!< Получение значения флага ControlStateFlags::needRepaint
+    virtual bool setControlStateFlagNeedRepaint(bool f) = 0; //!< Установка значения флага ControlStateFlags::needRepaint
+
+
 
 
     //------------------------------

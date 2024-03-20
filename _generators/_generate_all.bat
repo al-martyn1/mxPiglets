@@ -84,8 +84,11 @@
 @rem set KEYEVENTFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
 @rem set KEYEVENTFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Extended,ExtendedKey=0x0100;AltDown=0x2000;Repeat=0x4000;Up=0x8000;prevKeyStateDown;keyDown
 
-@set CONTROLFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Group,GroupStart;TabStop;NeedTabs;CantOwnFocus,FocusLess
+@set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@set CONTROLSTYLEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Group,GroupStart;TabStop;NeedTabs;CantOwnFocus,FocusLess
+
+@set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@set CONTROLSTATEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;NeedRepaint,NeedRedraw
 
 
 @rem  %TPL_OVERRIDE%
@@ -96,6 +99,7 @@ umba-enum-gen %GEN_OPTS% %HEX2% ^
 %MOUSEBUTTON_GEN_FLAGS%                 %UINT32% -E=MouseButton                      -F=%MOUSEBUTTON_DEF%           ^
 %MOUSEBUTTONSTATEFLAGS_GEN_FLAGS%       %UINT32% -E=MouseButtonStateFlags            -F=%MOUSEBUTTONSTATEFLAGS_DEF% ^
 %MOUSEMOVEEVENTTYPE_GEN_FLAGS%          %UINT32% -E=MouseMoveEventType               -F=%MOUSEMOVEEVENTTYPE_DEF%    ^
-%CONTROLFLAGS_GEN_FLAGS%                %UINT32% -E=ControlFlags                     -F=%CONTROLFLAGS_DEF%          ^
+%CONTROLSTYLEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStyleFlags                -F=%CONTROLSTYLEFLAGS_DEF%     ^
+%CONTROLSTATEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStateFlags                -F=%CONTROLSTATEFLAGS_DEF%     ^
 ..\enums.h
 

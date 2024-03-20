@@ -274,7 +274,7 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EMouseMoveEventType, std::map, 1 )
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EMouseMoveEventType, std::map, 1 )
 
 
-enum class ControlFlags : std::uint32_t
+enum class ControlStyleFlags : std::uint32_t
 {
     invalid        = (std::uint32_t)(-1),
     unknown        = (std::uint32_t)(-1),
@@ -287,35 +287,68 @@ enum class ControlFlags : std::uint32_t
     cantOwnFocus   = 0x08,
     focusLess      = 0x08
 
-}; // enum class ControlFlags : std::uint32_t
+}; // enum class ControlStyleFlags : std::uint32_t
 
-MARTY_CPP_MAKE_ENUM_FLAGS(ControlFlags)
+MARTY_CPP_MAKE_ENUM_FLAGS(ControlStyleFlags)
 
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::invalid        , "Invalid"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "CantOwnFocus" );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::none           , "None"         );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::tabStop        , "TabStop"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::group          , "Group"        );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlFlags::needTabs       , "NeedTabs"     );
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlFlags, std::map, 1 )
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::invalid        , "Invalid"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::cantOwnFocus   , "CantOwnFocus" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::none           , "None"         );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::tabStop        , "TabStop"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::group          , "Group"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::needTabs       , "NeedTabs"     );
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlStyleFlags, std::map, 1 )
 
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid        , "invalid"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::invalid        , "unknown"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "cantownfocus" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::cantOwnFocus   , "focusless"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none           , "none"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::none           , "noflags"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::tabStop        , "tabstop"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::group          , "group"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::group          , "groupstart"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlFlags::needTabs       , "needtabs"     );
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlFlags, std::map, 1 )
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid        , "invalid"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid        , "unknown"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::cantOwnFocus   , "cantownfocus" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::cantOwnFocus   , "focusless"    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none           , "none"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none           , "noflags"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop        , "tabstop"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group          , "group"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group          , "groupstart"   );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::needTabs       , "needtabs"     );
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlStyleFlags, std::map, 1 )
 
-MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlFlags, std::set)
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlStyleFlags, std::set)
 
-MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(ControlFlags, std::set)
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(ControlStyleFlags, std::set)
+
+
+enum class ControlStateFlags : std::uint32_t
+{
+    invalid       = (std::uint32_t)(-1),
+    unknown       = (std::uint32_t)(-1),
+    none          = 0x00,
+    noFlags       = 0x00,
+    needRepaint   = 0x01,
+    needRedraw    = 0x01
+
+}; // enum class ControlStateFlags : std::uint32_t
+
+MARTY_CPP_MAKE_ENUM_FLAGS(ControlStateFlags)
+
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStateFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::invalid       , "Invalid"     );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::none          , "None"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::needRepaint   , "NeedRepaint" );
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlStateFlags, std::map, 1 )
+
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlStateFlags, std::map, 1 )
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid       , "invalid"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid       , "unknown"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none          , "none"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none          , "noflags"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint   , "needrepaint" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint   , "needredraw"  );
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlStateFlags, std::map, 1 )
+
+MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlStateFlags, std::set)
+
+MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(ControlStateFlags, std::set)
 
 } // namespace mxPiglets
 
