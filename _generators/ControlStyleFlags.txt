@@ -13,8 +13,8 @@ ControlParent,ControlContainer,Container // Acts as control container, not a sin
 # Here goes flags as enum in flags enum
 DialogResultNone                                                =0     // Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button.
 DialogResultButton,DlgResultButton                              =0x400 // Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button.
-DialogDefButton,DlgDefButton                                    =0x800 // If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
-DialogEscButton,DlgEscButton,DialogEscapeButton,DlgEscapeButton =0xC00 // If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
+DialogDefButton,DlgDefButton                                    =0x800 // If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
+DialogEscButton,DlgEscButton,DialogEscapeButton,DlgEscapeButton =0xC00 // If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
 DialogResultFlagsMask                                           =0xC00 // Mask for "dialog*" sub-enum
 
 # Here goes flags as enum in flags enum
