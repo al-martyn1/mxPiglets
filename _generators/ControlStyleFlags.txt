@@ -4,9 +4,26 @@ PaintTransparent=1     // When drawing, it does not draw its background, only ch
 HitTransparent=2       // When checking coordinate hits (hit test), if a point does not hits on any of the child controls, then it is not considered a hit on the control
 TransparentControl=3   // PaintTransparent|HitTransparent
 Group,GroupStart=4     // Starts the control group
-TabStop                // Allow Tab navigation on control
-NeedTabs               // Prohibits tab processing, tab events are sent to the control without processing
-NeedCr,NeedEnter       // Prohibits Enter processing, Enter events are sent to the control without processing
+TabStop                // Allow the control to be in tab navigation list
 FocusLess,CantOwnFocus // Control can't own the input focus
 ControlParent,ControlContainer,Container // Acts as control container, not a single (possible compaund) control
-userFirst=0x10000
+
+# Here goes flags as enum in flags enum
+wantArrows   =0x1000   // Want arrow (direction) keys press/unpress events
+wantChars    =0x2000   // Want char input messages
+wantTab      =0x3000   // Want Tab key messages
+wantReturn   =0x4000   // Want Enter key messages
+wantAllKeys  =0x5000   // Want all keyboard input
+
+wantFlagsMask=0xF000   // Mask for "want" sub-enum
+
+# First user flag value
+userFirst=0x10000      // First user flag value
+
+
+
+#DLGC_WANTALLKEYS 0x0004   All keyboard input.
+#DLGC_WANTARROWS  0x0001   Direction keys.
+#DLGC_WANTCHARS   0x0080   WM_CHAR messages.
+#DLGC_WANTMESSAGE 0x0004   All keyboard input (the application passes this message in the MSG structure to the control).
+#DLGC_WANTTAB     0x0002   TAB key.

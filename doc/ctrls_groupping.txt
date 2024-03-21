@@ -89,3 +89,8 @@ https://vsokovikov.narod.ru/New_MSDN_API/Dlg_box/stl_ws_group.htm
 Это гарантирует то, что фокус ввода данных будет всегда в последний раз выбранном органе управления, когда 
 пользователь перемещался в группе, используя клавишу TAB.
 
+
+WM_GETDLGCODE message - https://learn.microsoft.com/en-us/windows/win32/dlgbox/wm-getdlgcode
+https://devblogs.microsoft.com/oldnewthing/20201231-00/?p=104627
+
+

@@ -22,6 +22,7 @@
 @set VALUES_CAMEL=--enum-values-style=CamelStyle
 @set VALUES_PASCAL=--enum-values-style=PascalStyle 
 @set SERIALIZE_PASCAL=--serialize-style=PascalStyle 
+@set SERIALIZE_ALL=--serialize-style=All 
 
 
 @set TPL_OVERRIDE=--override-template-parameter=EnumNameFormat:$(ENAMNAME)
@@ -60,38 +61,40 @@
 @rem IDC_PERSON        MAKEINTRESOURCE(32672)    Person select
 
 
-@set STOCKCURSOR_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,fmt-hex %VALUES_CAMEL% 
-@rem %SERIALIZE_PASCAL%
+@set STOCKCURSOR_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,fmt-hex %VALUES_CAMEL% %SERIALIZE_ALL%
 @set STOCKCURSOR_DEF=invalid,unknown=-1;custom=0;normal,arrow;beam,textSelect;wait,busy;cross;upArrow;handwriting;resizeWse;resizeEsw;resizeWe;resizeNs;resizeAll;cursorNo,no;hand;appStarting,semiWait;help;pin,locationSelect;person,personSelect;end
 
 
 @rem --- Compatible with Draw Context definitions
 
-@set MOUSEBUTTONEVENT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@set MOUSEBUTTONEVENT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
 @set MOUSEBUTTONEVENT_DEF=invalid,unknown=-1;released=0;pressed=1;doubleClick=2
 
-@set MOUSEBUTTON_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@set MOUSEBUTTON_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
 @set MOUSEBUTTON_DEF=invalid,unknown=-1;none=0;leftButton;rightButton;middleButton,midButton;xButton1;xButton2
 
-@set MOUSEBUTTONSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %SERIALIZE_PASCAL% %FLAGENUM_EXTRA%
+@set MOUSEBUTTONSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %SERIALIZE_ALL% %FLAGENUM_EXTRA%
 @set MOUSEBUTTONSTATEFLAGS_DEF=invalid,unknown=-1;none=0;leftButtonPressed=0x0001;rightButtonPressed=0x0002;shiftPressed=0x0004;controlPressed=0x0008;middleButtonPressed,midButtonPressed=0x0010;xButton1Pressed=0x0020;xButton2Pressed=0x0040
 
-@set MOUSEMOVEEVENTTYPE_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_PASCAL%
+@set MOUSEMOVEEVENTTYPE_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
 @rem set MOUSEMOVEEVENTTYPE_DEF=invalid,unknown=-1;move=0;hover;leave;enter
 @set MOUSEMOVEEVENTTYPE_DEF=invalid,unknown=-1;move=0;hover;leave
 
 @rem --- Compatible with marty_vk
-@rem set KEYEVENTFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@rem set KEYEVENTFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
 @rem set KEYEVENTFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;Extended,ExtendedKey=0x0100;AltDown=0x2000;Repeat=0x4000;Up=0x8000;prevKeyStateDown;keyDown
 
 @rem Флаг PaintTransparent - не рисует никакого фона
 @rem Флаг HitTransparent   - "прозрачен" для hitTest - на hitTest проверяются только дочерние контролы. Ставим для всяких панелей, layout'ов и подобных контролов.
 
-@set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
 @set CONTROLSTYLEFLAGS_DEF=@ControlStyleFlags.txt
 
-@set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
+@set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
 @set CONTROLSTATEFLAGS_DEF=@ControlStateFlags.txt
+
+@set DIALOGRESULT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
+@set DIALOGRESULT_DEF=@DialogResult.txt
 
 
 @rem  %TPL_OVERRIDE%
@@ -104,5 +107,6 @@ umba-enum-gen %GEN_OPTS% %HEX2% ^
 %MOUSEMOVEEVENTTYPE_GEN_FLAGS%          %UINT32% -E=MouseMoveEventType               -F=%MOUSEMOVEEVENTTYPE_DEF%    ^
 %CONTROLSTYLEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStyleFlags                -F=%CONTROLSTYLEFLAGS_DEF%     ^
 %CONTROLSTATEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStateFlags                -F=%CONTROLSTATEFLAGS_DEF%     ^
+%DIALOGRESULT_GEN_FLAGS%                %UINT32% -E=DialogResult                     -F=%DIALOGRESULT_DEF%          ^
 ..\enums.h
 
