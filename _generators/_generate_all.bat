@@ -88,10 +88,10 @@
 @rem Флаг HitTransparent   - "прозрачен" для hitTest - на hitTest проверяются только дочерние контролы. Ставим для всяких панелей, layout'ов и подобных контролов.
 
 @set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLSTYLEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;PaintTransparent=1;HitTransparent=2;TransparentControl=3;Group,GroupStart=4;TabStop;NeedTabs;FocusLess,CantOwnFocus;ControlParent,ControlContainer,Container;userFirst=0x10000
+@set CONTROLSTYLEFLAGS_DEF=@ControlStyleFlags.txt
 
 @set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA%
-@set CONTROLSTATEFLAGS_DEF=invalid,unknown=-1;None,NoFlags=0;NeedRepaint,NeedRedraw;Disabled;Grayed;hasFocus,inFocus;groupFocus;userFirst=0x10000
+@set CONTROLSTATEFLAGS_DEF=@ControlStateFlags.txt
 
 
 @rem  %TPL_OVERRIDE%

@@ -1,0 +1,12 @@
+invalid,unknown=-1
+None,NoFlags=0
+PaintTransparent=1     // When drawing, it does not draw its background, only child controls are drawn
+HitTransparent=2       // When checking coordinate hits (hit test), if a point does not hits on any of the child controls, then it is not considered a hit on the control
+TransparentControl=3   // PaintTransparent|HitTransparent
+Group,GroupStart=4     // Starts the control group
+TabStop                // Allow Tab navigation on control
+NeedTabs               // Prohibits tab processing, tab events are sent to the control without processing
+NeedCr,NeedEnter       // Prohibits Enter processing, Enter events are sent to the control without processing
+FocusLess,CantOwnFocus // Control can't own the input focus
+ControlParent,ControlContainer,Container // Acts as control container, not a single (possible compaund) control
+userFirst=0x10000

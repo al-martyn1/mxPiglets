@@ -1,0 +1,9 @@
+invalid,unknown=-1
+None,NoFlags=0
+Disabled=1                 // Disabled, can't process any input (keyboard/mouse)
+Grayed  =2                 // Looks grayed, but can process user input (keyboard/mouse)
+DisabledControl=3          // Disabled|Grayed
+NeedRepaint,NeedRedraw=4   // Marked as need repaint after event processing was done
+hasFocus,inFocus           // Control currently owns input focus
+groupFocus                 // Control that receives input focus when it goes to this controls group
+userFirst=0x10000

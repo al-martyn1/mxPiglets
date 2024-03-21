@@ -280,18 +280,20 @@ enum class ControlStyleFlags : std::uint32_t
     unknown              = (std::uint32_t)(-1),
     none                 = 0x00,
     noFlags              = 0x00,
-    paintTransparent     = 0x01,
-    hitTransparent       = 0x02,
-    transparentControl   = 0x03,
-    group                = 0x04,
-    groupStart           = 0x04,
-    tabStop              = 0x08,
-    needTabs             = 0x10,
-    focusLess            = 0x20,
-    cantOwnFocus         = 0x20,
-    controlParent        = 0x40,
-    controlContainer     = 0x40,
-    container            = 0x40,
+    paintTransparent     = 0x01 /*!< When drawing, it does not draw its background, only child controls are drawn */,
+    hitTransparent       = 0x02 /*!< When checking coordinate hits (hit test), if a point does not hits on any of the child controls, then it is not considered a hit on the control */,
+    transparentControl   = 0x03 /*!< PaintTransparent|HitTransparent */,
+    group                = 0x04 /*!< Starts the control group */,
+    groupStart           = 0x04 /*!< Starts the control group */,
+    tabStop              = 0x08 /*!< Allow Tab navigation on control */,
+    needTabs             = 0x10 /*!< Prohibits tab processing, tab events are sent to the control without processing */,
+    needCr               = 0x20 /*!< Prohibits Enter processing, Enter events are sent to the control without processing */,
+    needEnter            = 0x20 /*!< Prohibits Enter processing, Enter events are sent to the control without processing */,
+    focusLess            = 0x40 /*!< Control can't own the input focus */,
+    cantOwnFocus         = 0x40 /*!< Control can't own the input focus */,
+    controlParent        = 0x80 /*!< Acts as control container, not a single (possible compaund) control */,
+    controlContainer     = 0x80 /*!< Acts as control container, not a single (possible compaund) control */,
+    container            = 0x80 /*!< Acts as control container, not a single (possible compaund) control */,
     userFirst            = 0x10000
 
 }; // enum class ControlStyleFlags : std::uint32_t
@@ -307,6 +309,7 @@ MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "HitTransparent"     );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "TransparentControl" );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::needTabs             , "NeedTabs"           );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::needCr               , "NeedCr"             );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::focusLess            , "FocusLess"          );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::controlParent        , "ControlParent"      );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::userFirst            , "UserFirst"          );
@@ -324,6 +327,8 @@ MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hittransparent"     );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparentcontrol" );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::needTabs             , "needtabs"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::needCr               , "needcr"             );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::needCr               , "needenter"          );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focusless"          );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cantownfocus"       );
     MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "controlparent"      );
@@ -339,47 +344,50 @@ MARTY_CPP_ENUM_FLAGS_DESERIALIZE_SET(ControlStyleFlags, std::set)
 
 enum class ControlStateFlags : std::uint32_t
 {
-    invalid       = (std::uint32_t)(-1),
-    unknown       = (std::uint32_t)(-1),
-    none          = 0x00,
-    noFlags       = 0x00,
-    needRepaint   = 0x01,
-    needRedraw    = 0x01,
-    disabled      = 0x02,
-    grayed        = 0x04,
-    hasFocus      = 0x08,
-    inFocus       = 0x08,
-    groupFocus    = 0x10,
-    userFirst     = 0x10000
+    invalid           = (std::uint32_t)(-1),
+    unknown           = (std::uint32_t)(-1),
+    none              = 0x00,
+    noFlags           = 0x00,
+    disabled          = 0x01 /*!< Disabled, can't process any input (keyboard/mouse) */,
+    grayed            = 0x02 /*!< Looks grayed, but can process user input (keyboard/mouse) */,
+    disabledControl   = 0x03 /*!< Disabled|Grayed */,
+    needRepaint       = 0x04 /*!< Marked as need repaint after event processing was done */,
+    needRedraw        = 0x04 /*!< Marked as need repaint after event processing was done */,
+    hasFocus          = 0x08 /*!< Control currently owns input focus */,
+    inFocus           = 0x08 /*!< Control currently owns input focus */,
+    groupFocus        = 0x10 /*!< Control that receives input focus when it goes to this controls group */,
+    userFirst         = 0x10000
 
 }; // enum class ControlStateFlags : std::uint32_t
 
 MARTY_CPP_MAKE_ENUM_FLAGS(ControlStateFlags)
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStateFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::userFirst     , "UserFirst"   );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::invalid       , "Invalid"     );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::grayed        , "Grayed"      );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::none          , "None"        );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::groupFocus    , "GroupFocus"  );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::needRepaint   , "NeedRepaint" );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::hasFocus      , "HasFocus"    );
-    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::disabled      , "Disabled"    );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::invalid           , "Invalid"         );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::grayed            , "Grayed"          );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::none              , "None"            );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::disabled          , "Disabled"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::hasFocus          , "HasFocus"        );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::disabledControl   , "DisabledControl" );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::needRepaint       , "NeedRepaint"     );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::groupFocus        , "GroupFocus"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStateFlags::userFirst         , "UserFirst"       );
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlStateFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlStateFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::userFirst     , "userfirst"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid       , "invalid"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid       , "unknown"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::grayed        , "grayed"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none          , "none"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none          , "noflags"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::groupFocus    , "groupfocus"  );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint   , "needrepaint" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint   , "needredraw"  );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::hasFocus      , "hasfocus"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::hasFocus      , "infocus"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::disabled      , "disabled"    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid           , "invalid"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::invalid           , "unknown"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::grayed            , "grayed"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none              , "none"            );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::none              , "noflags"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::disabled          , "disabled"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::hasFocus          , "hasfocus"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::hasFocus          , "infocus"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::disabledControl   , "disabledcontrol" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint       , "needrepaint"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::needRepaint       , "needredraw"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::groupFocus        , "groupfocus"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStateFlags::userFirst         , "userfirst"       );
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlStateFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlStateFlags, std::set)
