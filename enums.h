@@ -304,30 +304,45 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EMouseMoveEventType, std::map, 1 )
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EMouseMoveEventType, std::map, 1 )
 
 
+
+/*! Common control style flags. dialog* and want* flags are not used directly, they are used trough virt fns getDialogResultFlags/getWantKeyFlags, which can be overriden in childs */
 enum class ControlStyleFlags : std::uint32_t
 {
-    invalid              = (std::uint32_t)(-1),
-    unknown              = (std::uint32_t)(-1),
-    none                 = 0x00,
-    noFlags              = 0x00,
-    paintTransparent     = 0x01 /*!< When drawing, it does not draw its background, only child controls are drawn */,
-    hitTransparent       = 0x02 /*!< When checking coordinate hits (hit test), if a point does not hits on any of the child controls, then it is not considered a hit on the control */,
-    transparentControl   = 0x03 /*!< PaintTransparent|HitTransparent */,
-    group                = 0x04 /*!< Starts the control group */,
-    groupStart           = 0x04 /*!< Starts the control group */,
-    tabStop              = 0x08 /*!< Allow the control to be in tab navigation list */,
-    focusLess            = 0x10 /*!< Control can't own the input focus */,
-    cantOwnFocus         = 0x10 /*!< Control can't own the input focus */,
-    controlParent        = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
-    controlContainer     = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
-    container            = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
-    wantArrows           = 0x1000 /*!< Want arrow (direction) keys press/unpress events */,
-    wantChars            = 0x2000 /*!< Want char input messages */,
-    wantTab              = 0x3000 /*!< Want Tab key messages */,
-    wantReturn           = 0x4000 /*!< Want Enter key messages */,
-    wantAllKeys          = 0x5000 /*!< Want all keyboard input */,
-    wantFlagsMask        = 0xF000 /*!< Mask for "want" sub-enum */,
-    userFirst            = 0x10000 /*!< First user flag value */
+    invalid                 = (std::uint32_t)(-1),
+    unknown                 = (std::uint32_t)(-1),
+    none                    = 0x00,
+    noFlags                 = 0x00,
+    paintTransparent        = 0x01 /*!< When drawing, it does not draw its background, only child controls are drawn */,
+    hitTransparent          = 0x02 /*!< When checking coordinate hits (hit test), if a point does not hits on any of the child controls, then it is not considered a hit on the control */,
+    transparentControl      = 0x03 /*!< Combination of PaintTransparent|HitTransparent flags */,
+    group                   = 0x04 /*!< Starts the control group */,
+    groupStart              = 0x04 /*!< Starts the control group */,
+    tabStop                 = 0x08 /*!< Allow the control to be in tab navigation list */,
+    focusLess               = 0x10 /*!< Control can't own the input focus */,
+    cantOwnFocus            = 0x10 /*!< Control can't own the input focus */,
+    controlParent           = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
+    controlContainer        = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
+    container               = 0x20 /*!< Acts as control container, not a single (possible compaund) control */,
+    dialogResultNone        = 0x00 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    dialogResultButton      = 0x400 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    dlgResultButton         = 0x400 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    dialogDefButton         = 0x800 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dlgDefButton            = 0x800 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dialogEscButton         = 0xC00 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dlgEscButton            = 0xC00 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dialogEscapeButton      = 0xC00 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dlgEscapeButton         = 0xC00 /*!< If any of window controls have this flag, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
+    dialogResultFlagsMask   = 0xC00 /*!< Mask for "dialog*" sub-enum */,
+    wantArrows              = 0x1000 /*!< Want arrow (direction) keys press/unpress events */,
+    wantChars               = 0x2000 /*!< Want char input messages */,
+    wantTab                 = 0x3000 /*!< Want Tab key messages */,
+    wantReturn              = 0x4000 /*!< Want Enter key messages */,
+    wantCr                  = 0x4000 /*!< Want Enter key messages */,
+    wantEscape              = 0x4000 /*!< Want Enter key messages */,
+    wantEsc                 = 0x4000 /*!< Want Enter key messages */,
+    wantAllKeys             = 0x5000 /*!< Want all keyboard input */,
+    wantFlagsMask           = 0xF000 /*!< Mask for "want*" sub-enum */,
+    userFirst               = 0x10000 /*!< First user flag value */
 
 }; // enum class ControlStyleFlags : std::uint32_t
 
@@ -339,12 +354,15 @@ MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "PaintTransparent"   );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::tabStop              , "TabStop"            );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::wantChars            , "WantChars"          );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "DialogResultButton" );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::group                , "Group"              );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "HitTransparent"     );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "TransparentControl" );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "WantAllKeys"        );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::focusLess            , "FocusLess"          );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::controlParent        , "ControlParent"      );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "DialogDefButton"    );
+    MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "DialogEscButton"    );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "WantReturn"         );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "WantArrows"         );
     MARTY_CPP_ENUM_FLAGS_SERIALIZE_ITEM( ControlStyleFlags::wantTab              , "WantTab"            );
@@ -353,62 +371,101 @@ MARTY_CPP_ENUM_FLAGS_SERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_END( ControlStyleFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_BEGIN( ControlStyleFlags, std::map, 1 )
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid              , "invalid"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid              , "unknown"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "none"                );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "no-flags"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "no_flags"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "noflags"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "paint-transparent"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "paint_transparent"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "painttransparent"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tab-stop"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tab_stop"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tabstop"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "want-chars"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "want_chars"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "wantchars"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group"               );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group-start"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group_start"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "groupstart"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hit-transparent"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hit_transparent"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hittransparent"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparent-control" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparent_control" );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparentcontrol"  );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "want-all-keys"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "want_all_keys"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "wantallkeys"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cant-own-focus"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cantownfocus"        );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focus-less"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focus_less"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focusless"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cant_own_focus"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control-parent"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control_parent"      );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control_container"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "controlparent"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control-container"   );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "controlcontainer"    );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "container"           );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want-return"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want_return"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "wantreturn"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "want-arrows"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "want_arrows"         );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "wantarrows"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "want-tab"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "want_tab"            );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "wanttab"             );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "want-flags-mask"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "want_flags_mask"     );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "wantflagsmask"       );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "user-first"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "user_first"          );
-    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "userfirst"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid              , "invalid"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::invalid              , "unknown"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "none"                     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "no-flags"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "dialog_result_none"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "no_flags"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "noflags"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "dialog-result-none"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::none                 , "dialogresultnone"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "paint-transparent"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "paint_transparent"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::paintTransparent     , "painttransparent"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tab-stop"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tab_stop"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::tabStop              , "tabstop"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "want-chars"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "want_chars"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantChars            , "wantchars"                );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dialog-result-button"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dialogresultbutton"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dialog_result_button"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dlg-result-button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dlg_result_button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogResultButton   , "dlgresultbutton"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group"                    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group-start"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "group_start"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::group                , "groupstart"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hit-transparent"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hit_transparent"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::hitTransparent       , "hittransparent"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparent-control"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparent_control"      );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::transparentControl   , "transparentcontrol"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "want-all-keys"            );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "want_all_keys"            );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantAllKeys          , "wantallkeys"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cant-own-focus"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cantownfocus"             );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focus-less"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focus_less"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "focusless"                );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::focusLess            , "cant_own_focus"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control-parent"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control_parent"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control_container"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "controlparent"            );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "control-container"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "controlcontainer"         );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::controlParent        , "container"                );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dialog-def-button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dialog_def_button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dialogdefbutton"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dlg-def-button"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dlg_def_button"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogDefButton      , "dlgdefbutton"             );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog-esc-button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog_esc_button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialogescbutton"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlg-esc-button"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlg_esc_button"           );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialogresultflagsmask"    );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlgescbutton"             );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog-escape-button"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog_escape_button"     );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialogescapebutton"       );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlg-escape-button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlgescapebutton"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dlg_escape_button"        );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog-result-flags-mask" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::dialogEscButton      , "dialog_result_flags_mask" );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "wantescape"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want-return"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want_return"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "wantreturn"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want-cr"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want-escape"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want_cr"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "wantcr"                   );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want_escape"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want-esc"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "want_esc"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantReturn           , "wantesc"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "want-arrows"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "want_arrows"              );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantArrows           , "wantarrows"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "want-tab"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "want_tab"                 );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantTab              , "wanttab"                  );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "want-flags-mask"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "want_flags_mask"          );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::wantFlagsMask        , "wantflagsmask"            );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "user-first"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "user_first"               );
+    MARTY_CPP_ENUM_FLAGS_DESERIALIZE_ITEM( ControlStyleFlags::userFirst            , "userfirst"                );
 MARTY_CPP_ENUM_FLAGS_DESERIALIZE_END( ControlStyleFlags, std::map, 1 )
 
 MARTY_CPP_ENUM_FLAGS_SERIALIZE_SET(ControlStyleFlags, std::set)
@@ -424,7 +481,7 @@ enum class ControlStateFlags : std::uint32_t
     noFlags           = 0x00,
     disabled          = 0x01 /*!< Disabled, can't process any input (keyboard/mouse) */,
     grayed            = 0x02 /*!< Looks grayed, but can process user input (keyboard/mouse) */,
-    disabledControl   = 0x03 /*!< Disabled|Grayed */,
+    disabledControl   = 0x03 /*!< Combination of Disabled|Grayed flags */,
     needRepaint       = 0x04 /*!< Marked as need repaint after event processing was done */,
     needRedraw        = 0x04 /*!< Marked as need repaint after event processing was done */,
     hasFocus          = 0x08 /*!< Control currently owns input focus */,
