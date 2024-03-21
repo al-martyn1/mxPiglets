@@ -338,8 +338,8 @@ enum class ControlStyleFlags : std::uint32_t
     wantTab                 = 0x3000 /*!< Want Tab key messages */,
     wantReturn              = 0x4000 /*!< Want Enter key messages */,
     wantCr                  = 0x4000 /*!< Want Enter key messages */,
-    wantEscape              = 0x4000 /*!< Want Enter key messages */,
-    wantEsc                 = 0x4000 /*!< Want Enter key messages */,
+    wantEscape              = 0x4000 /*!< Want Escape key messages */,
+    wantEsc                 = 0x4000 /*!< Want Escape key messages */,
     wantAllKeys             = 0x5000 /*!< Want all keyboard input */,
     wantFlagsMask           = 0xF000 /*!< Mask for "want*" sub-enum */,
     userFirst               = 0x10000 /*!< First user flag value */
