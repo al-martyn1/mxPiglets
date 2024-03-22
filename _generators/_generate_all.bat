@@ -87,10 +87,10 @@
 @rem Флаг PaintTransparent - не рисует никакого фона
 @rem Флаг HitTransparent   - "прозрачен" для hitTest - на hitTest проверяются только дочерние контролы. Ставим для всяких панелей, layout'ов и подобных контролов.
 
-@set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
+@set CONTROLSTYLEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %HEX4% %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
 @set CONTROLSTYLEFLAGS_DEF=@ControlStyleFlags.txt
 
-@set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
+@set CONTROLSTATEFLAGS_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class,flags,fmt-hex %HEX4% %VALUES_CAMEL% %FLAGENUM_EXTRA% %SERIALIZE_ALL%
 @set CONTROLSTATEFLAGS_DEF=@ControlStateFlags.txt
 
 @set DIALOGRESULT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%

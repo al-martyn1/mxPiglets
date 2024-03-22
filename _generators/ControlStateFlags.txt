@@ -1,9 +1,15 @@
 invalid,unknown=-1
 None,NoFlags=0
-Disabled=1                 // Disabled, can't process any input (keyboard/mouse)
-Grayed  =2                 // Looks grayed, but can process user input (keyboard/mouse)
+Disabled=1                 // Disabled, can't process any input (keyboard/mouse) (:disabled/:enabled)
+Grayed,Greyed=2            // Looks grayed, but can process user input (keyboard/mouse) (:grayed)
 DisabledControl=3          // Combination of Disabled|Grayed flags
-NeedRepaint,NeedRedraw=4   // Marked as need repaint after event processing was done
-hasFocus,inFocus           // Control currently owns input focus
-groupFocus                 // Control that receives input focus when it goes to this controls group (last focused control in group)
+ReadOnly=4                 // Not disabled and grayed, looks like regular control, but user can't change control state (:read-only)
+hasFocus,inFocus           // Control currently owns input focus (:focus)
+groupFocus                 // Control that receives input focus when it goes to this controls group (last focused control in group) (:group-focus)
+hover                      // Matches when a user designates an item with a pointing device, such as holding the mouse pointer over the item (:hover)
+visited                    // Matches controls that had user interaction (example: links that have been visited) (:visited)
+hadFocus                   // Matches elements that had input focus at least one time (:hadfocus)
+
+NeedRepaint,NeedRedraw     // Marked as need repaint after event processing was done
+
 userFirst=0x10000          // First user flag value
