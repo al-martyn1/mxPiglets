@@ -54,6 +54,8 @@ struct IControl : public NonCopyableObject
     virtual String getControIdString() const = 0; //!< Возвращает идентификатор контрола
     virtual void setControlIdString(String idString) = 0; //!< Задаёт идентификатор контрола
 
+    //std::vector<String> getControlStylePseudoClassStrings() const = 0;
+
 
     //------------------------------
     // Флаги стиля контрола
@@ -61,6 +63,12 @@ struct IControl : public NonCopyableObject
     // Флаги храним в одном слове - смысл разносить по отдельным bool переменым?
     // Зато можно получить/установить/изменить сразу пачкой по маске
     // Для удобства для каждого флага будут хелперы
+
+    //! Флаги (на самом деле enum, внутри флагов) dialogResult* хранятся вместе с остальными флагами стиля контрола, но контрол может ситуативно по разному отвечать, перегрузив данную функцию. Не следует брать значение dialogResult* непосредственно из флагов контрола
+    virtual ControlStyleFlags getControlStyleDialogResultFlags() const = 0;
+
+    //! Флаги (на самом деле enum, внутри флагов) want* хранятся вместе с остальными флагами стиля контрола, но контрол может ситуативно по разному отвечать, перегрузив данную функцию. Не следует брать значение want* непосредственно из флагов контрола
+    virtual ControlStyleFlags getControlStyleWantKeyFlags() const = 0;
 
     //! Установка всех флагов (assign). Возвращает старое значение флагов
     virtual ControlStyleFlags setControlStyleFlags(ControlStyleFlags flags) = 0;

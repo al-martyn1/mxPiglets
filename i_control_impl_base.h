@@ -134,6 +134,21 @@ public:
     // Флаги контрола
 
     //------------------------------
+    virtual ControlStyleFlags getControlStyleDialogResultFlags() const override
+    {
+        // По умолчанию просто возвращаем то, что установлено во флагах, но контрол может переопределить данное поведение
+        return m_controlStyleFlags & ControlStyleFlags::dialogResultFlagsMask;
+    }
+
+    //------------------------------
+    virtual ControlStyleFlags getControlStyleWantKeyFlags() const override
+    {
+        // По умолчанию просто возвращаем то, что установлено во флагах, но контрол может переопределить данное поведение
+        return m_controlStyleFlags & ControlStyleFlags::wantKeyFlagsMask;
+    }
+
+
+    //------------------------------
     //! Установка всех флагов (assign). Возвращает старое значение флагов
     virtual ControlStyleFlags setControlStyleFlags(ControlStyleFlags flags) override
     {
