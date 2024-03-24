@@ -323,7 +323,7 @@ enum class ControlStyleFlags : std::uint32_t
     controlParent           = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
     controlContainer        = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
     container               = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
-    dialogResultNone        = 0x0000 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    dialogResultNone        = 0x0000 /*!< Clicking/pushing this control don't clos the dialog */,
     dialogResultButton      = 0x0400 /*!< (:close) Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
     dlgResultButton         = 0x0400 /*!< (:close) Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
     dialogDefButton         = 0x0800 /*!< (:close, :default-ok) If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
@@ -623,20 +623,146 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EDialogResult, std::map, 1 )
 
 enum class ETokenType : std::uint16_t
 {
-    tokenTypeNone   = 0
+    tokenTypeNone   = 0,
+    closeDialog     = 256 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    defaultOk       = 257 /*!< Close control with ok code (when RETURN is pressed) */,
+    defaultCancel   = 258 /*!< Close control with cancel code (when ESC is pressed) */,
+    disabled        = 259 /*!< Disabled, can't process any input (keyboard/mouse) */,
+    enabled         = 260 /*!< Enabled, can process user input (keyboard/mouse) */,
+    grayed          = 261 /*!< Looks grayed, but can process user input (keyboard/mouse) */,
+    readOnly        = 262 /*!< Not disabled and grayed, looks like regular control, but user can't change control state */,
+    focus           = 263 /*!< Control currently owns input focus */,
+    groupFocus      = 264 /*!< Control that receives input focus when it goes to this controls group (last focused control in group) */,
+    hover           = 265 /*!< Matches when a user designates an item with a pointing device, such as holding the mouse pointer over the item */,
+    visited         = 266 /*!< Matches controls that had user interaction (example= links that have been visited) */,
+    hadFocus        = 267 /*!< Matches elements that had input focus at least one time */,
+    pressed         = 268,
+    unpressed       = 269,
+    checked         = 270,
+    unchecked       = 271,
+    checked3        = 272 /*!< In third state for 3-state controls */,
+    selected        = 273,
+    unselected      = 274,
+    selected3       = 275 /*!< In third state for 3-state controls */,
+    button          = 276,
+    pushButton      = 277,
+    toggleButton    = 278,
+    checkBox        = 279,
+    checkBox3       = 280,
+    radioButton     = 281,
+    radioButton3    = 282,
+    label           = 283,
+    edit            = 284,
+    listBox         = 285,
+    dropDownList    = 286,
+    dropDownEdit    = 287
 
 }; // enum class ETokenType : std::uint16_t
 
 MARTY_CPP_MAKE_ENUM_IS_FLAGS_FOR_NON_FLAGS_ENUM(ETokenType)
 
 MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( ETokenType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checkBox       , "CheckBox"      );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::tokenTypeNone  , "TokenTypeNone" );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::defaultOk      , "DefaultOk"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::readOnly       , "ReadOnly"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::closeDialog    , "CloseDialog"   );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::selected       , "Selected"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::defaultCancel  , "DefaultCancel" );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::pressed        , "Pressed"       );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::disabled       , "Disabled"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::enabled        , "Enabled"       );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::grayed         , "Grayed"        );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::unselected     , "Unselected"    );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::focus          , "Focus"         );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::groupFocus     , "GroupFocus"    );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::visited        , "Visited"       );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::hover          , "Hover"         );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::hadFocus       , "HadFocus"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::dropDownList   , "DropDownList"  );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::unpressed      , "Unpressed"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checked        , "Checked"       );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::unchecked      , "Unchecked"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checked3       , "Checked3"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::selected3      , "Selected3"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::edit           , "Edit"          );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checkBox3      , "CheckBox3"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::toggleButton   , "ToggleButton"  );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::button         , "Button"        );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::pushButton     , "PushButton"    );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::radioButton    , "RadioButton"   );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::radioButton3   , "RadioButton3"  );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::label          , "Label"         );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::listBox        , "ListBox"       );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::dropDownEdit   , "DropDownEdit"  );
 MARTY_CPP_ENUM_CLASS_SERIALIZE_END( ETokenType, std::map, 1 )
 
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETokenType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox       , "check-box"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox       , "check_box"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox       , "checkbox"        );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "token-type-none" );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "token_type_none" );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "tokentypenone"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultOk      , "default-ok"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultOk      , "default_ok"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultOk      , "defaultok"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::readOnly       , "read-only"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::readOnly       , "read_only"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::readOnly       , "readonly"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::closeDialog    , "close-dialog"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::closeDialog    , "close_dialog"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::closeDialog    , "closedialog"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::selected       , "selected"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultCancel  , "default-cancel"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultCancel  , "default_cancel"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::defaultCancel  , "defaultcancel"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::pressed        , "pressed"         );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::disabled       , "disabled"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::enabled        , "enabled"         );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::grayed         , "grayed"          );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::unselected     , "unselected"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::focus          , "focus"           );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::groupFocus     , "group-focus"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::groupFocus     , "group_focus"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::groupFocus     , "groupfocus"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::visited        , "visited"         );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hover          , "hover"           );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "had-focus"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "had_focus"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "hadfocus"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "drop-down-list"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "drop_down_list"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "dropdownlist"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::unpressed      , "unpressed"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checked        , "checked"         );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::unchecked      , "unchecked"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checked3       , "checked3"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::selected3      , "selected3"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::edit           , "edit"            );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox3      , "check-box3"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox3      , "check_box3"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox3      , "checkbox3"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::toggleButton   , "toggle-button"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::toggleButton   , "toggle_button"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::toggleButton   , "togglebutton"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::button         , "button"          );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::pushButton     , "push-button"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::pushButton     , "push_button"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::pushButton     , "pushbutton"      );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton    , "radio-button"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton    , "radio_button"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton    , "radiobutton"     );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton3   , "radio-button3"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton3   , "radio_button3"   );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::radioButton3   , "radiobutton3"    );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::label          , "label"           );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::listBox        , "list-box"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::listBox        , "list_box"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::listBox        , "listbox"         );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownEdit   , "drop-down-edit"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownEdit   , "drop_down_edit"  );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownEdit   , "dropdownedit"    );
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( ETokenType, std::map, 1 )
 
 } // namespace mxPiglets
