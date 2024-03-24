@@ -30,6 +30,12 @@ public:
         return pT->m_pImpl->isValid();
     }
 
+    auto getPimpl() const
+    {
+        auto pT  = static_cast<const T*>(this);
+        return pT->m_pImpl;
+    }
+
     auto getCheckedRawPtr(const char* methodName) const
     {
         if (isNull())
