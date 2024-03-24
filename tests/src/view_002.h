@@ -22,6 +22,10 @@
 #include "mxPiglets/impl/win32/elapsed_timer_impl.h"
 #include "mxPiglets/i_control_impl_base.h"
 
+//
+#include "mxPiglets/i_token_dictionary_impl.h"
+#include "mxPiglets/token_dictionary.h"
+
 
 #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG(nFlags) (((nFlags)>>(30-16))&0x01)
 #define CRACK_ON_KEY_UPDOWN_FLAGS_GET_PREV_DOWN_STATE_FLAG(nFlags)  CRACK_ON_KEY_UPDOWN_FLAGS_GET_REPETITION_STATE_FLAG((nFlags))
@@ -75,6 +79,7 @@ public:
 
     CBitmapView() : elapsedTimer(mxPiglets::createElapsedTimer())
     {
+        setTokenDictionary(mxPiglets::TokenDictionary(mxPiglets::createSharedTokenDictionaryWithKnownTokens()));
     }
 
     CBitmapView(const CBitmapView&) : HostWindowImplBase() // = delete;
