@@ -6,6 +6,40 @@
 #include "marty_draw_context/i_draw_context.h"
 #include "marty_draw_context/i_image_list.h"
 
+//
+#include "enums.h"
+
+#include <type_traits>
+#include <functional>
+#include <memory>
+
+// template <class T> inline
+// std::size_t hash_combine(std::size_t seed, const T &v)
+// {
+//     //std::hash<T> hasher;
+//     return seed ^ ( std::hash<T>()(v) + 0x9e3779b9 + (seed<<6) + (seed>>2) );
+// }
+
+
+namespace std {
+
+template <>
+struct hash<mxPiglets::ETokenType>
+{
+    std::size_t operator()(const mxPiglets::ETokenType& c) const
+    {
+        // std::size_t seed = marty_draw_context::hash_combine(0,c.x);
+        // return marty_draw_context::hash_combine(seed,c.y);
+
+        // Для std::uint16_t похоже нет специализации, но мы знаем, какой тип используется, поэтому прямо задаём тип
+        typedef std::underlying_type<mxPiglets::ETokenType>::type  UnderlyingType;
+        //typedef  unsigned short  UnderlyingType;
+
+        return std::hash<UnderlyingType>()((UnderlyingType)c);
+    }
+};
+
+} // namespace std {
 
 
 //----------------------------------------------------------------------------
@@ -129,6 +163,7 @@ using taborder_t = std::uint32_t;
 constexpr const taborder_t tabOrderAuto              = 0;
 constexpr const taborder_t tabOrderInvalid           = (taborder_t)-1; // не участвует в смене фокуса по табу
 constexpr const taborder_t tabOrderDefAutoIncrement  = 10;
+
 
 
 
