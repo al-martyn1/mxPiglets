@@ -6,6 +6,8 @@
 #include "non_copyable_object.h"
 #include "cursor.h"
 #include "window_timer.h"
+#include "i_token_dictionary.h"
+#include "token_dictionary.h"
 //
 #include "marty_vk/VkCode.h"
 
@@ -58,6 +60,9 @@ public:
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 
     virtual taborder_t getAutoTabOrder() const = 0;
+
+    virtual TokenDictionary getTokenDictionary() const = 0;
+    virtual TokenDictionary setTokenDictionary(TokenDictionary dict) = 0;
 
     virtual Cursor createStockCursor(EStockCursor cursorKind) const = 0;
     virtual Cursor setCursor(Cursor cursor) = 0;

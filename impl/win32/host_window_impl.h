@@ -19,6 +19,7 @@
 #include "../../i_host_window.h"
 #include "../../checked_pimpl.h"
 #include "../../cursor.h"
+#include "../../token_dictionary.h"
 //
 #include "window_timer_impl.h"
 #include "cursor_handles_holder.h"
@@ -46,6 +47,8 @@ class HostWindowImpl : public TParent
     mutable std::shared_ptr<IWindowTimer>     m_pIWindowTimerForOnTimer;
 
     mutable taborder_t                        m_autoTabOrderCounter = 0;
+
+    std::shared_ptr<ITokenDictionary>         m_pTokenDictionary;
     
 
 
@@ -477,6 +480,17 @@ public:
         auto pSharedImpl = std::make_shared<WindowTimerImpl>(getHwnd(), m_curTimerId++, timeoutMs, bRunning);
         return WindowTimer(std::static_pointer_cast<IWindowTimer>(pSharedImpl));
     }
+
+    virtual TokenDictionary getTokenDictionary() const override
+    {
+        return TokenDictionary(m_pTokenDictionary);
+    }
+
+    virtual TokenDictionary setTokenDictionary(TokenDictionary dict) override
+    {
+        return TokenDictionary(std::exchange(m_pTokenDictionary, dict.getPimpl()));
+    }
+
 
     virtual Cursor createStockCursor(EStockCursor cursorKind) const override
     {
