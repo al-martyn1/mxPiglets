@@ -620,5 +620,24 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( EDialogResult, std::map, 1 )
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( EDialogResult::_continue  , "continue"  );
 MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EDialogResult, std::map, 1 )
 
+
+enum class ETokenType : std::uint16_t
+{
+    tokenTypeNone   = 0
+
+}; // enum class ETokenType : std::uint16_t
+
+MARTY_CPP_MAKE_ENUM_IS_FLAGS_FOR_NON_FLAGS_ENUM(ETokenType)
+
+MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( ETokenType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::tokenTypeNone  , "TokenTypeNone" );
+MARTY_CPP_ENUM_CLASS_SERIALIZE_END( ETokenType, std::map, 1 )
+
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETokenType, std::map, 1 )
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "token-type-none" );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "token_type_none" );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::tokenTypeNone  , "tokentypenone"   );
+MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( ETokenType, std::map, 1 )
+
 } // namespace mxPiglets
 

@@ -96,6 +96,10 @@
 @set DIALOGRESULT_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
 @set DIALOGRESULT_DEF=@DialogResult.txt
 
+@set TOKENTYPE_GEN_FLAGS=--enum-flags=0 --enum-flags=type-decl,serialize,deserialize,lowercase,enum-class %VALUES_CAMEL% %SERIALIZE_ALL%
+@set TOKENTYPE_DEF=@TokenType.txt
+
+
 
 @rem  %TPL_OVERRIDE%
 
@@ -108,5 +112,6 @@ umba-enum-gen %GEN_OPTS% %HEX2% ^
 %CONTROLSTYLEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStyleFlags                -F=%CONTROLSTYLEFLAGS_DEF%     ^
 %CONTROLSTATEFLAGS_GEN_FLAGS%           %UINT32% -E=ControlStateFlags                -F=%CONTROLSTATEFLAGS_DEF%     ^
 %DIALOGRESULT_GEN_FLAGS%                %UINT32% -E=DialogResult                     -F=%DIALOGRESULT_DEF%          ^
+%TOKENTYPE_GEN_FLAGS%                   %UINT16% -E=TokenType                        -F=%TOKENTYPE_DEF%             ^
 ..\enums.h
 
