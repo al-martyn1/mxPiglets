@@ -57,12 +57,19 @@ protected:
 
 public:
 
+
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 
     virtual taborder_t getAutoTabOrder() const = 0;
 
     virtual TokenDictionary getTokenDictionary() const = 0;
     virtual TokenDictionary setTokenDictionary(TokenDictionary dict) = 0;
+
+    //! Возвращает токен по строке, при необходимости добавляя
+    virtual ETokenType getTokenForString(const String &name) const = 0;
+    //! Возвращает строку по токену, или пустую строку, если токен не найден
+    virtual String getStringForToken(ETokenType tk) const = 0;
+
 
     virtual Cursor createStockCursor(EStockCursor cursorKind) const = 0;
     virtual Cursor setCursor(Cursor cursor) = 0;

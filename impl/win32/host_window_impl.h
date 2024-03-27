@@ -491,6 +491,27 @@ public:
         return TokenDictionary(std::exchange(m_pTokenDictionary, dict.getPimpl()));
     }
 
+    //! Возвращает токен по строке, при необходимости добавляя
+    virtual ETokenType getTokenForString(const String &name) const override
+    {
+        if (!m_pTokenDictionary)
+        {
+            throw std::runtime_error("HostWindow::getTokenForString: TokenDictionary not set");
+        }
+
+        return m_pTokenDictionary->getTokenForString(name);
+    }
+
+    //! Возвращает строку по токену, или пустую строку, если токен не найден
+    virtual String getStringForToken(ETokenType tk) const override
+    {
+        if (!m_pTokenDictionary)
+        {
+            throw std::runtime_error("HostWindow::getStringForToken: TokenDictionary not set");
+        }
+
+        return m_pTokenDictionary->getStringForToken(tk);
+    }
 
     virtual Cursor createStockCursor(EStockCursor cursorKind) const override
     {
