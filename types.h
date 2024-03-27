@@ -12,6 +12,18 @@
 #include <type_traits>
 #include <functional>
 #include <memory>
+#include <cctype>
+#include <string>
+
+
+
+namespace mxPiglets {
+
+using ETokenUnderlyingType = std::underlying_type<ETokenType>::type;
+
+} // namespace mxPiglets {
+
+
 
 // template <class T> inline
 // std::size_t hash_combine(std::size_t seed, const T &v)
@@ -19,6 +31,7 @@
 //     //std::hash<T> hasher;
 //     return seed ^ ( std::hash<T>()(v) + 0x9e3779b9 + (seed<<6) + (seed>>2) );
 // }
+
 
 
 namespace std {
@@ -32,18 +45,139 @@ struct hash<mxPiglets::ETokenType>
         // return marty_draw_context::hash_combine(seed,c.y);
 
         // Для std::uint16_t похоже нет специализации, но мы знаем, какой тип используется, поэтому прямо задаём тип
-        typedef std::underlying_type<mxPiglets::ETokenType>::type  UnderlyingType;
+        typedef mxPiglets::ETokenUnderlyingType UnderlyingType;
         //typedef  unsigned short  UnderlyingType;
 
         return std::hash<UnderlyingType>()((UnderlyingType)c);
     }
 };
 
+
+#if (__cplusplus) > 201703L
+    //#define _HAS_CXX17 1
+    //#define _HAS_CXX20 1
+#elif (__cplusplus) > 201402L
+    //#define _HAS_CXX17 1
+    //#define _HAS_CXX20 0
+#else // _STL_LANG <= 201402L
+    //#define _HAS_CXX17 0
+    //#define _HAS_CXX20 0
+#endif
+
+
+#if defined(_MSC_VER)
+// #elif defined(__CC_ARM)
+// #elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+// #elif defined(__ICCARM__) || defined(__IAR_SYSTEMS_ICC__)
+#elif defined(__GNUC__)
+// #elif defined(__clang__)
+// #elif defined(__BORLANDC__)
+// #elif defined(__CODEGEARC__)
+#else
+    // #error "std::char_traits<mxPiglets::ETokenType>: Unknown (unsupported) compiler"
+#endif
+
+
+
 } // namespace std {
 
 
 //----------------------------------------------------------------------------
 namespace mxPiglets {
+
+
+
+//----------------------------------------------------------------------------
+
+#if defined(_MSC_VER)
+
+    struct ETokenTypeCharTraits : std::_Char_traits<ETokenType, ETokenUnderlyingType> {};
+
+#else
+
+    // Надо вручную колбасить ETokenTypeCharTraits, чтобы оно было совместимо со стандартным
+
+    struct ETokenTypeCharTraits
+    {
+        typedef ETokenType              char_type ;
+        typedef ETokenUnderlyingType    int_type  ;
+        typedef std::streamoff          off_type  ;
+        typedef std::streampos          pos_type  ;
+        typedef std::mbstate_t          state_type;
+        
+        static constexpr void assign(char_type& c1, const char_type& c2) noexcept   { c1 = c2; }
+        static constexpr bool eq(const char_type& c1, const char_type& c2) noexcept { return c1 == c2; }
+        static constexpr bool lt(const char_type& c1, const char_type& c2) noexcept { return c1 < c2; }
+        
+        static constexpr int compare(const char_type* s1, const char_type* s2, std::size_t n)
+        {
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                if (lt(s1[i], s2[i]))
+                    return -1;
+                else if (lt(s2[i], s1[i]))
+                    return 1;
+            }
+        
+            return 0;
+        }
+        
+        static constexpr std::size_t length(const char_type* s)
+        {
+            std::size_t i = 0;
+            while (!eq(s[i], (ETokenType)0))
+                ++i;
+            return i;
+        }
+        
+        static constexpr const char_type* find(const char_type* s, std::size_t n, const char_type& a)
+        {
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                if (eq(s[i], a))
+                    return s + i;
+            }
+            return 0;
+        }
+        
+        static char_type* move(char_type* s1, const char_type* s2, std::size_t n)
+        {
+            if (n==0)
+                return s1;
+            return (static_cast<char_type*>(__builtin_memmove(s1, s2, n * sizeof(char_type))));
+        }
+        
+        static char_type* copy(char_type* s1, const char_type* s2, std::size_t n)
+        {
+            if (n == 0)
+                return s1;
+            return (static_cast<char_type*>(__builtin_memcpy(s1, s2, n * sizeof(char_type))));
+        }
+        
+        static char_type* assign(char_type* s, std::size_t n, char_type a)
+        {
+            for (std::size_t i = 0; i < n; ++i)
+                assign(s[i], a);
+            return s;
+        }
+        
+        static constexpr char_type to_char_type(const int_type& c) noexcept { return char_type(c); }
+        static constexpr int_type to_int_type(const char_type& c) noexcept  { return int_type(c); }
+        static constexpr bool eq_int_type(const int_type& c1, const int_type& c2) noexcept { return c1 == c2; }
+        static constexpr int_type eof() noexcept { return static_cast<int_type>(-1); }
+        static constexpr int_type not_eof(const int_type& c) noexcept { return eq_int_type(c, eof()) ? 0 : c; }
+    
+    }; // struct ETokenTypeCharTraits
+
+#endif
+
+//----------------------------------------------------------------------------
+
+
+using TokenString = std::basic_string<ETokenType, ETokenTypeCharTraits>;
+
+//----------------------------------------------------------------------------
+
 
 
 

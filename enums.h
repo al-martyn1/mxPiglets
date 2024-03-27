@@ -323,7 +323,7 @@ enum class ControlStyleFlags : std::uint32_t
     controlParent           = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
     controlContainer        = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
     container               = 0x0020 /*!< Acts as control container, not a single (possible compaund) control */,
-    dialogResultNone        = 0x0000 /*!< Clicking/pushing this control don't clos the dialog */,
+    dialogResultNone        = 0x0000 /*!< Clicking/pushing this control don't close the dialog */,
     dialogResultButton      = 0x0400 /*!< (:close) Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
     dlgResultButton         = 0x0400 /*!< (:close) Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
     dialogDefButton         = 0x0800 /*!< (:close, :default-ok) If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button. */,
@@ -624,38 +624,40 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_END( EDialogResult, std::map, 1 )
 enum class ETokenType : std::uint16_t
 {
     tokenTypeNone   = 0,
-    closeDialog     = 256 /*!< Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
-    defaultOk       = 257 /*!< Close control with ok code (when RETURN is pressed) */,
-    defaultCancel   = 258 /*!< Close control with cancel code (when ESC is pressed) */,
-    disabled        = 259 /*!< Disabled, can't process any input (keyboard/mouse) */,
-    enabled         = 260 /*!< Enabled, can process user input (keyboard/mouse) */,
-    grayed          = 261 /*!< Looks grayed, but can process user input (keyboard/mouse) */,
-    readOnly        = 262 /*!< Not disabled and grayed, looks like regular control, but user can't change control state */,
-    focus           = 263 /*!< Control currently owns input focus */,
-    groupFocus      = 264 /*!< Control that receives input focus when it goes to this controls group (last focused control in group) */,
-    hover           = 265 /*!< Matches when a user designates an item with a pointing device, such as holding the mouse pointer over the item */,
-    visited         = 266 /*!< Matches controls that had user interaction (example= links that have been visited) */,
-    hadFocus        = 267 /*!< Matches elements that had input focus at least one time */,
-    pressed         = 268,
-    unpressed       = 269,
-    checked         = 270,
-    unchecked       = 271,
-    checked3        = 272 /*!< In third state for 3-state controls */,
-    selected        = 273,
-    unselected      = 274,
-    selected3       = 275 /*!< In third state for 3-state controls */,
-    button          = 276,
-    pushButton      = 277,
-    toggleButton    = 278,
-    checkBox        = 279,
-    checkBox3       = 280,
-    radioButton     = 281,
-    radioButton3    = 282,
-    label           = 283,
-    edit            = 284,
-    listBox         = 285,
-    dropDownList    = 286,
-    dropDownEdit    = 287
+    closeDialog     = 256 /*!< pseudo - Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button. */,
+    defaultOk       = 257 /*!< pseudo - Close control with ok code (when RETURN is pressed) */,
+    defaultCancel   = 258 /*!< pseudo - Close control with cancel code (when ESC is pressed) */,
+    disabled        = 259 /*!< pseudo - Disabled, can't process any input (keyboard/mouse) */,
+    enabled         = 260 /*!< pseudo - Enabled, can process user input (keyboard/mouse) */,
+    grayed          = 261 /*!< pseudo - Looks grayed, but can process user input (keyboard/mouse) */,
+    readOnly        = 262 /*!< pseudo - Not disabled and grayed, looks like regular control, but user can't change control state */,
+    focus           = 263 /*!< pseudo - Control currently owns input focus */,
+    groupFocus      = 264 /*!< pseudo - Control that receives input focus when it goes to this controls group (last focused control in group) */,
+    hover           = 265 /*!< pseudo - Matches when a user designates an item with a pointing device, such as holding the mouse pointer over the item */,
+    visited         = 266 /*!< pseudo - Matches controls that had user interaction (example - links that have been visited) */,
+    hadFocus        = 267 /*!< pseudo - Matches elements that had input focus at least one time */,
+    normal          = 268 /*!< state - default state of generic control */,
+    pressed         = 269 /*!< state - */,
+    unpressed       = 270 /*!< state - */,
+    checked         = 271 /*!< state - */,
+    unchecked       = 272 /*!< state - */,
+    checked3        = 273 /*!< state - In third state for 3-state controls */,
+    selected        = 274 /*!< state - */,
+    unselected      = 275 /*!< state - */,
+    selected3       = 276 /*!< state - In third state for 3-state controls */,
+    control         = 277 /*!< ctrl - generic control - We use it for basic tests of controls. It can be created, but it makes no sense, it only draws itself and throws messages into the debug output */,
+    button          = 278 /*!< ctrl - */,
+    pushButton      = 279 /*!< ctrl - */,
+    toggleButton    = 280 /*!< ctrl - */,
+    checkBox        = 281 /*!< ctrl - */,
+    checkBox3       = 282 /*!< ctrl - */,
+    radioButton     = 283 /*!< ctrl - */,
+    radioButton3    = 284 /*!< ctrl - */,
+    label           = 285 /*!< ctrl - */,
+    edit            = 286 /*!< ctrl - */,
+    listBox         = 287 /*!< ctrl - */,
+    dropDownList    = 288 /*!< ctrl - */,
+    dropDownEdit    = 289 /*!< ctrl - */
 
 }; // enum class ETokenType : std::uint16_t
 
@@ -679,12 +681,14 @@ MARTY_CPP_ENUM_CLASS_SERIALIZE_BEGIN( ETokenType, std::map, 1 )
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::visited        , "Visited"       );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::hover          , "Hover"         );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::hadFocus       , "HadFocus"      );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::normal         , "Normal"        );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::dropDownList   , "DropDownList"  );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::unpressed      , "Unpressed"     );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checked        , "Checked"       );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::unchecked      , "Unchecked"     );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checked3       , "Checked3"      );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::selected3      , "Selected3"     );
+    MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::control        , "Control"       );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::edit           , "Edit"          );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::checkBox3      , "CheckBox3"     );
     MARTY_CPP_ENUM_CLASS_SERIALIZE_ITEM( ETokenType::toggleButton   , "ToggleButton"  );
@@ -731,6 +735,7 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETokenType, std::map, 1 )
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "had-focus"       );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "had_focus"       );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::hadFocus       , "hadfocus"        );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::normal         , "normal"          );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "drop-down-list"  );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "drop_down_list"  );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::dropDownList   , "dropdownlist"    );
@@ -739,6 +744,7 @@ MARTY_CPP_ENUM_CLASS_DESERIALIZE_BEGIN( ETokenType, std::map, 1 )
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::unchecked      , "unchecked"       );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checked3       , "checked3"        );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::selected3      , "selected3"       );
+    MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::control        , "control"         );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::edit           , "edit"            );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox3      , "check-box3"      );
     MARTY_CPP_ENUM_CLASS_DESERIALIZE_ITEM( ETokenType::checkBox3      , "check_box3"      );
