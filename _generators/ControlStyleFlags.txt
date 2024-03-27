@@ -11,7 +11,7 @@ FocusLess,CantOwnFocus  // Control can't own the input focus
 ControlParent,ControlContainer,Container // Acts as control container, not a single (possible compaund) control
 
 # Here goes flags as enum in flags enum. 
-DialogResultNone                                                =0     // Clicking/pushing this control don't clos the dialog
+DialogResultNone                                                =0     // Clicking/pushing this control don't close the dialog
 DialogResultButton,DlgResultButton                              =0x400 // (:close) Clicking/pushing this control closes the dialog, and dlgResultCode (EDialogResult) control field used as result code. This control does not have to be an any kind of button.
 DialogDefButton,DlgDefButton                                    =0x800 // (:close, :default-ok) If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Enter. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
 DialogCancelButton,DlgCancelButton,DialogEscButton,DlgEscButton,DialogEscapeButton,DlgEscapeButton =0xC00 // (:close, :default-cancel) If any of window controls have set this flags combination, it's dlgResultCode (EDialogResult) is used to close the dialog while user presses Escape. Only first found control's dlgResultCode with this flag is used. This control does not have to be an any kind of button.
