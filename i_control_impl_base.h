@@ -17,13 +17,21 @@ protected:
     mutable ControlStateFlags    m_controlStateFlags      = ControlStateFlags::none;
 
     String                       m_controlText;
-    String                       m_controlTypeString;
-    String                       m_controlStyleString;
-    String                       m_controlIdString;
+    EDialogResult                m_controlDialogResult    = EDialogResult::none;
+
+    String                       m_controlTypeString      ; //!< Строка с именем типа контрола
+    mutable ETokenType           m_controlTypeToken       = ETokenType::tokenTypeNone; //!< Кешированный токен типа контрола
+
+    String                       m_controlStyleString     ; //!< Строка с именем стиля контрола
+    mutable ETokenType           m_controlStyleToken      = ETokenType::tokenTypeNone; //!< Кешированный токен стиля контрола
+
+    String                       m_controlIdString        ; //!< Строка с идентификатором контрола
+    mutable ETokenType           m_controlIdToken         = ETokenType::tokenTypeNone; //!< Кешированный токен идентификатор контрола
+
     taborder_t                   m_controlTabOrder        = tabOrderInvalid;
 
-    Point                        m_position;
-    Size                         m_size;
+    Point                        m_position               = {0,0};
+    Size                         m_size                   = {0,0};
 
 
 public:
@@ -72,6 +80,41 @@ public:
         return std::exchange(m_pHostWindow, phw);
     }
 
+    auto getCheckedHostWindowPtr(const char* methodName)
+    {
+        if (m_pHostWindow)
+        {
+            throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": host window pointer not initialized");
+        }
+
+        return m_pHostWindow;
+    }
+
+    auto getCheckedHostWindowPtr(const char* methodName) const
+    {
+        if (m_pHostWindow)
+        {
+            throw std::runtime_error(std::string(methodName ? methodName : "Unknown method") + ": host window pointer not initialized");
+        }
+
+        return m_pHostWindow;
+    }
+
+
+    //------------------------------
+    //! Возвращает токен по строке, при необходимости добавляя
+    virtual ETokenType getTokenForString(const String &name) const override
+    {
+        return getCheckedHostWindowPtr("IControlImplBase::getTokenForString")->getTokenForString(name);
+    }
+
+    //! Возвращает строку по токену, или пустую строку, если токен не найден
+    virtual String getStringForToken(ETokenType tk) const override
+    {
+        return getCheckedHostWindowPtr("IControlImplBase::getStringForToken")->getStringForToken(tk);
+    }
+
+
     //------------------------------
     // Текст контрола - заголовок/метка, или содержимое (редактора) - зависит от типа контрола
     virtual String getControlText() const override    //!< Получение текста контрола. Способ использования текста зависит от типа контрола
@@ -83,6 +126,7 @@ public:
     {
         m_controlText = text;
     }
+
 
     //------------------------------
     // TabOrder
@@ -98,36 +142,264 @@ public:
     
 
     //------------------------------
-    // Имя типа, стиля, состояния, id - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
-    virtual String getControlTypeString() const override  //!< Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
+    // DialogResult
+    //! Закрывает ли интеракция с данным контролом диалог. Стили контрола должны содержать одно из значений ControlStyleFlags::DialogResult*, кроме DialogResultNone, и код результата не должен быть EDialogResult::invalid или EDialogResult::none
+    virtual bool isControlCloseDialog() const override
+    {
+        auto controlStyleDialogResultFlags = getControlStyleDialogResultFlags();
+
+        if (controlStyleDialogResultFlags==ControlStyleFlags::dialogResultNone) // является ли контрол таким контролом, который закрывает диалог?
+        {
+            return false; // контрол не закрывает диалог
+        }
+
+        if (m_controlDialogResult==EDialogResult::invalid || m_controlDialogResult==EDialogResult::none)
+        {
+            return false; // для контрола не установлен корректный код возврата диалога - контрол не закрывает диалог
+        }
+
+        return true;
+    }
+
+    //! Если на форме/в диалоге нажимается Enter, ищется первый контрол, который при вызове данной функции вернёт true
+    virtual bool isControlCloseDialogDefaultOk() const override
+    {
+        auto controlStyleDialogResultFlags = getControlStyleDialogResultFlags();
+        return controlStyleDialogResultFlags==ControlStyleFlags::dialogDefButton; // контрол имеет стиль defButton - это работает по нажатию Enter 
+    }
+
+    //! Если на форме/в диалоге нажимается Escape, ищется первый контрол, который при вызове данной функции вернёт true
+    virtual bool isControlCloseDialogDefaultCancel() const override
+    {
+        auto controlStyleDialogResultFlags = getControlStyleDialogResultFlags();
+        return controlStyleDialogResultFlags==ControlStyleFlags::dialogCancelButton; // контрол имеет стиль dialogCancelButton - это работает по нажатию Escape
+    }
+
+    //! Возвращает код возврата модального диалога. Если данный контрол является закрывающим диалог (стили ControlStyleFlags::DialogResult*, кроме DialogResultNone), то при интеракции с контролом возвращается данный код
+    virtual EDialogResult getControlDialogResult() const override
+    {
+        return m_controlDialogResult;
+    }
+
+    //! Устанавливает код возврата модального диалога.
+    virtual void setControlDialogResult(EDialogResult dlgRes) override
+    {
+        m_controlDialogResult = dlgRes;
+    }
+
+
+    //------------------------------
+    // // Имя типа, стиля, состояния, id - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
+
+
+    //! Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
+    virtual String getControlTypeString() const override
     {
         return m_controlTypeString;
     }
 
-    virtual String getControlStateString() const override //!< Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+    //! Возвращает токен имени типа контрола. Определяется конкретным типом контрола, снаружи не задать. При этом строка типа контрола первична.
+    virtual ETokenType getControlType() const override
     {
-        return make_string<String>("default");
+        if (m_controlTypeToken!=ETokenType::tokenTypeNone) // есть валидный токен имени типа
+        {
+            return m_controlTypeToken;
+        }
+
+        m_controlTypeToken = getTokenForString(m_controlTypeString); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+
+        return m_controlTypeToken;
     }
 
-    virtual String getControlStyleString() const override //!< Возвращает имя стиля контрола
+
+    //! Возвращает имя стиля контрола
+    virtual String getControlStyleString() const override
     {
         return m_controlStyleString;
     }
 
-    virtual void setControlStyleString(String styString) override //!< Задаёт имя стиля контрола
+    //! Задаёт имя стиля контрола
+    virtual void setControlStyleString(const String &styString) override
     {
+        m_controlStyleToken  = ETokenType::tokenTypeNone; // сбрасываем кешированный токен стиля
         m_controlStyleString = styString;
     }
 
-    virtual String getControIdString() const override //!< Возвращает идентификатор контрола
+    //! Возвращает токен имени стиля контрола. При этом строка стиля контрола первична.
+    virtual ETokenType getControlStyle() const override
+    {
+        if (m_controlStyleToken!=ETokenType::tokenTypeNone) // есть валидный токен имени типа
+        {
+            return m_controlStyleToken;
+        }
+
+        m_controlStyleToken = getTokenForString(m_controlStyleString); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+
+        return m_controlStyleToken;
+    }
+
+    //! Задаёт стиль контрола используя токен. При этом строка стиля контрола первична.
+    virtual void setControlStyle(ETokenType sty) override
+    {
+        m_controlStyleString = getStringForToken(sty); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+        m_controlStyleToken  = sty;
+    }
+
+
+    //! Возвращает идентификатор контрола
+    virtual String getControIdString() const override
     {
         return m_controlIdString;
     }
 
-    virtual void setControlIdString(String idString) override //!< Задаёт идентификатор контрола
+    //! Задаёт идентификатор контрола
+    virtual void setControlIdString(const String &idString) override
     {
+        m_controlIdToken  = ETokenType::tokenTypeNone; // сбрасываем кешированный токен ID
         m_controlIdString = idString;
     }
+
+    //! Возвращает токен идентификатора контрола. При этом строка идентификатора контрола первична.
+    virtual ETokenType getControId() const override
+    {
+        if (m_controlIdToken!=ETokenType::tokenTypeNone) // есть валидный токен ID
+        {
+            return m_controlIdToken;
+        }
+
+        m_controlIdToken = getTokenForString(m_controlIdString); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+
+        return m_controlIdToken;
+    }
+    //! Задаёт идентификатор контрола используя токен. При этом строка идентификатора контрола первична.
+    virtual void setControlId(ETokenType idString) override
+    {
+        m_controlIdString = getStringForToken(idString); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+        m_controlIdToken  = idString;
+    }
+
+    //! Возвращает токен имени/названия состояния контрола. Определяется конкретным типом контрола, снаружи не задать.
+    virtual ETokenType getControlState() const override
+    {
+        return ETokenType::normal; // default state of generic control
+    }
+
+    //! Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+    virtual String getControlStateString() const override
+    {
+        return getStringForToken(ETokenType::normal); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+    }
+
+    //! Устанавливает состояние контрола (например, начальное состояние) по токену. Все возможные токены состояний любых контролов есть у нас в словаре, но каждый контрол поддерживает только малую часть. Для разных контролов состояния с одним именем могут означать разное. При ошибке возвращает false (если состояние не известно, или его нельзя установить по другой причине). В тч для использования в дизайнере форм
+    virtual bool setControlState(ETokenType tk) override
+    {
+        return tk==ETokenType::normal; // В базовом контроле поддерживается только это состояние, поэтому ничего устанавливать не надо
+    }
+
+    //! Устанавливает состояние контрола (например, начальное состояние) по строке. Все возможные токены состояний любых контролов есть у нас в словаре, но каждый контрол поддерживает только малую часть. Для разных контролов состояния с одним именем могут означать разное. При ошибке возвращает false (если состояние не известно, или его нельзя установить по другой причине). В тч для использования в дизайнере форм
+    virtual bool setControlStateString(const String &stateString) override
+    {
+        return setControlState(getTokenForString(stateString)); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+    }
+
+    //! Возвращает список допустимых состояний контрола
+    virtual TokenString getControlStates() const override
+    {
+        TokenString res;
+        res.append(1, ETokenType::normal);
+        return res;
+    }
+
+    std::vector<String> tokenStringToStringVectorHelper(const TokenString &tkStr) const
+    {
+        std::vector<String> res; res.reserve(tkStr.size());
+        for( auto tk : tkStr)
+            res.emplace_back(getStringForToken(tk)); // тут будет проверка хост окна, и кинуто исключение, если оно не установлено
+        return res;
+    }
+
+    //! Возвращает список допустимых состояний контрола (вектор строк)
+    virtual std::vector<String> getControlStateStrings() const override
+    {
+        return tokenStringToStringVectorHelper(getControlStates());
+    }
+
+
+    // ControlStyleFlags            m_controlStyleFlags      = ControlStyleFlags::none;
+    // mutable ControlStateFlags    m_controlStateFlags      = ControlStateFlags::none;
+
+    //!< Возвращает список псевдо-классов контрола. Набор псевдо-классов фиксирован и токены для строк предопределены и первичны
+    virtual TokenString getControlStylePseudoClasses() const override
+    {
+        TokenString tokens; // ничего не резервируем, это же просто строка токенов, small string оптимизация и всё такое
+
+        // Тут обрабатываем установленные стили контрола - ETokenType:: closeDialog/defaultOk/defaultCancel (см ControlStyleFlags)
+
+        if (isControlCloseDialog())
+        {
+            tokens.append(1, ETokenType::closeDialog);
+
+            if (isControlCloseDialogDefaultOk())
+            {
+                tokens.append(1, ETokenType::defaultOk);
+            }
+
+            if (isControlCloseDialogDefaultCancel())
+            {
+                tokens.append(1, ETokenType::defaultCancel);
+            }
+        }
+
+
+        if ((m_controlStateFlags&ControlStateFlags::disabled)!=0)
+            tokens.append(1, ETokenType::disabled); // flag disabled!=0 - disabled
+        else
+            tokens.append(1, ETokenType::enabled);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::grayed)!=0)
+            tokens.append(1, ETokenType::grayed);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::readOnly)!=0)
+            tokens.append(1, ETokenType::readOnly);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::hasFocus)!=0)
+            tokens.append(1, ETokenType::focus);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::groupFocus)!=0)
+            tokens.append(1, ETokenType::groupFocus);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::hover)!=0)
+            tokens.append(1, ETokenType::hover);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::visited)!=0)
+            tokens.append(1, ETokenType::visited);
+
+
+        if ((m_controlStateFlags&ControlStateFlags::hadFocus)!=0)
+            tokens.append(1, ETokenType::hadFocus);
+
+
+        // if ((m_controlStateFlags&ControlStateFlags::)!=0)
+        //     tokens.append(1, ETokenType::);
+        // else
+        //     tokens.append(1, ETokenType::);
+
+        return tokens;
+    }
+
+
+    // //!< Возвращает список псевдо-классов контрола (вектор строк). Набор псевдо-классов фиксирован и токены для строк предопределены и первичны
+     virtual std::vector<String> getControlStylePseudoClassStrings() const override
+     {
+         return tokenStringToStringVectorHelper(getControlStylePseudoClasses());
+     }
+
 
 
     //----------------------------------------------------------------------------

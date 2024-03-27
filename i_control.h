@@ -31,11 +31,32 @@ struct IControl : public NonCopyableObject
     virtual const IHostWindow* getHostWindow() const = 0;
     virtual IHostWindow*       setHostWindow(IHostWindow* phw) = 0; //!< Возвращает старый указатель IHostWindow*
 
+    //! Возвращает токен по строке, при необходимости добавляя
+    virtual ETokenType getTokenForString(const String &name) const = 0;
+    //! Возвращает строку по токену, или пустую строку, если токен не найден
+    virtual String getStringForToken(ETokenType tk) const = 0;
+
 
     //------------------------------
     // TabOrder
+    //! Возвращает целочисленный идентификатор таб-ордера
     virtual taborder_t getControlTabOrder() const = 0;
+    //! Задаёт идентификатор таб-ордера. Следует вызывать только до добавления контрола в контейнер. В противном случае результаты не определены
     virtual taborder_t setControlTabOrder(taborder_t newTabOrder) = 0;
+
+
+    //------------------------------
+    // DialogResult
+    //! Закрывает ли интеракция с данным контролом диалог. Стили контрола должны содержать одно из значений ControlStyleFlags::DialogResult*, кроме DialogResultNone, и код результата не должен быть EDialogResult::invalid или EDialogResult::none
+    virtual bool isControlCloseDialog() const = 0;
+    //! Если на форме/в диалоге нажимается Enter, ищется первый контрол, который при вызове данной функции вернёт true
+    virtual bool isControlCloseDialogDefaultOk() const = 0;
+    //! Если на форме/в диалоге нажимается Escape, ищется первый контрол, который при вызове данной функции вернёт true
+    virtual bool isControlCloseDialogDefaultCancel() const = 0;
+    //! Возвращает код возврата модального диалога. Если данный контрол является закрывающим диалог (стили ControlStyleFlags::DialogResult*, кроме DialogResultNone), то при интеракции с контролом возвращается данный код
+    virtual EDialogResult getControlDialogResult() const = 0;
+    //! Устанавливает код возврата модального диалога.
+    virtual void setControlDialogResult(EDialogResult dlgRes) = 0;
 
 
     //------------------------------
@@ -43,18 +64,61 @@ struct IControl : public NonCopyableObject
     virtual String getControlText() const = 0;    //!< Получение текста контрола. Способ использования текста зависит от типа контрола
     virtual void setControlText(String text) = 0; //!< Установка текста контрола. Способ использования текста зависит от типа контрола
 
+
     //------------------------------
     // Имя типа, стиля, состояния, id - для использования в отрисовщике, потом на этой базе можно будет сделать недо-CSS
-    virtual String getControlTypeString() const = 0;  //!< Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
-    virtual String getControlStateString() const = 0; //!< Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+    // При использовании токенов используется указатель на хост окно, через которое производится конвертация строк в идентификаторы.
+    // Изачально указатель на хост окно может быть не установлен, и тогда при установке строкового свойства кеширование токена не производится.
+    // Но при получении строкового свойства надо кидать исключение - значения свойств нужны в основном для отрисовки, тогда 
+    // хост окно уже должно быть установлено
 
-    virtual String getControlStyleString() const = 0; //!< Возвращает имя стиля контрола
-    virtual void setControlStyleString(String styString) = 0; //!< Задаёт имя стиля контрола
 
-    virtual String getControIdString() const = 0; //!< Возвращает идентификатор контрола
-    virtual void setControlIdString(String idString) = 0; //!< Задаёт идентификатор контрола
+    //! Возвращает имя типа контрола - button/pushbutton/checkbox/radiobutton/listbox etc. Определяется конкретным типом контрола, снаружи не задать
+    virtual String getControlTypeString() const = 0;
+    //! Возвращает токен имени типа контрола. Определяется конкретным типом контрола, снаружи не задать. При этом строка типа контрола первична.
+    virtual ETokenType getControlType() const = 0;
 
-    //std::vector<String> getControlStylePseudoClassStrings() const = 0;
+
+    //! Возвращает имя стиля контрола
+    virtual String getControlStyleString() const = 0;
+    //! Задаёт имя стиля контрола
+    virtual void setControlStyleString(const String &styString) = 0;
+    //! Возвращает токен имени стиля контрола. При этом строка стиля контрола первична.
+    virtual ETokenType getControlStyle() const = 0;
+    //! Задаёт стиль контрола используя токен. При этом строка стиля контрола первична.
+    virtual void setControlStyle(ETokenType sty) = 0;
+
+
+    //! Возвращает идентификатор контрола
+    virtual String getControIdString() const = 0;
+    //! Задаёт идентификатор контрола
+    virtual void setControlIdString(const String &idString) = 0;
+    //! Возвращает токен идентификатора контрола. При этом строка идентификатора контрола первична.
+    virtual ETokenType getControId() const = 0;
+    //! Задаёт идентификатор контрола используя токен. При этом строка идентификатора контрола первична.
+    virtual void setControlId(ETokenType idString) = 0;
+
+
+    //! Возвращает токен имени/названия состояния контрола. Определяется конкретным типом контрола, снаружи не задать.
+    virtual ETokenType getControlState() const = 0;
+    //! Возвращает имя/название состояния контрола - pushed/unpushed, checked/unchecked, selected/unselected, и тп. Определяется конкретным типом контрола, снаружи не задать.
+    virtual String getControlStateString() const = 0;
+
+    //! Устанавливает состояние контрола (например, начальное состояние) по токену. Все возможные токены состояний любых контролов есть у нас в словаре, но каждый контрол поддерживает только малую часть. Для разных контролов состояния с одним именем могут означать разное. При ошибке возвращает false (если состояние не известно, или его нельзя установить по другой причине). В тч для использования в дизайнере форм
+    virtual bool setControlState(ETokenType tk) = 0;
+    //! Устанавливает состояние контрола (например, начальное состояние) по строке. Все возможные токены состояний любых контролов есть у нас в словаре, но каждый контрол поддерживает только малую часть. Для разных контролов состояния с одним именем могут означать разное. При ошибке возвращает false (если состояние не известно, или его нельзя установить по другой причине). В тч для использования в дизайнере форм
+    virtual bool setControlStateString(const String &stateString) = 0;
+
+    //! Возвращает список допустимых состояний контрола (в тч для использования в дизайнере форм)
+    virtual TokenString getControlStates() const = 0;
+    //! Возвращает список допустимых состояний контрола (вектор строк, в тч для использования в дизайнере форм)
+    virtual std::vector<String> getControlStateStrings() const = 0;
+
+
+    //!< Возвращает список псевдо-классов контрола. Набор псевдо-классов фиксирован и токены для строк предопределены и первичны
+    virtual TokenString getControlStylePseudoClasses() const = 0;
+    //!< Возвращает список псевдо-классов контрола (вектор строк). Набор псевдо-классов фиксирован и токены для строк предопределены и первичны
+    virtual std::vector<String> getControlStylePseudoClassStrings() const = 0;
 
 
     //------------------------------
