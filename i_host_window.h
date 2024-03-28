@@ -52,11 +52,56 @@ protected:
     virtual void onWindowMouseMoveEvents( MouseMoveEventType moveEventType, MouseButtonStateFlags mbStateFlags, const WindowPoint &point) = 0;
     virtual void onWindowMouseWheel(MouseButtonStateFlags mbStateFlags, int zDelta, const WindowPoint &point) = 0;
 
+    virtual void onWindowPaintEvent() //!< Вызывается в обработчике WM_PAINT (DoPaint WTL)
+    {
+        auto pCanvas = getCanvasForPaintEvent();
+        prepareCanvasScaleOffset  (pCanvas);
+
+        drawSceneBackground       (pCanvas);
+        cacheSceneBackground      (pCanvas);
+
+        drawSceneAnimation        (pCanvas);
+        drawSceneControls         (pCanvas);
+        drawSceneControlsAnimation(pCanvas);
+        drawDragItems             (pCanvas);
+        drawMouseState            (pCanvas);
+    }
+
     virtual taborder_t getAutoTabOrderIncrement() const = 0;
 
 
 public:
 
+    virtual std::shared_ptr<ICanvas> getCanvas() const = 0; //!< Возвращает канвас для рисования вне onWindowPaintEvent
+    virtual std::shared_ptr<ICanvas> getCanvasForPaintEvent() const = 0; //!< Возвращает канвас для рисования в обработчике onWindowPaintEvent
+    virtual void prepareCanvasScaleOffset(std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); }; //!< Настройка канваса, переопределяет пользователь
+
+    virtual bool selectCachedBackground    (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); return false; } //!< Устанавливает в канвасе кешированный background, возвращает false, если background не был установлен, и требуется перерисовка
+    virtual void cacheSceneBackground      (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Кеширование background'а сцены
+    virtual void drawSceneBackground       (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка background'а сцены
+    virtual void drawSceneAnimation        (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка анимаций сцены
+    virtual void drawSceneControls         (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка контролов
+    virtual void drawSceneControlsAnimation(std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка анимации контролов
+    virtual void drawDragItems             (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка перетаскиваний
+    virtual void drawMouseState            (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Отрисовка выделений мышкой
+
+    virtual void drawScene() //!< Отрисовка сцены по 
+    {
+        auto pCanvas = getCanvas();
+        prepareCanvasScaleOffset  (pCanvas);
+
+        if (!selectCachedBackground(pCanvas))
+        {
+            drawSceneBackground(pCanvas);
+            cacheSceneBackground(pCanvas);
+        }
+
+        drawSceneAnimation        (pCanvas);
+        drawSceneControls         (pCanvas);
+        drawSceneControlsAnimation(pCanvas);
+        drawDragItems             (pCanvas);
+        drawMouseState            (pCanvas);
+    }
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;
 

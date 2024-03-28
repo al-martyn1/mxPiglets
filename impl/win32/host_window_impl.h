@@ -24,7 +24,8 @@
 #include "window_timer_impl.h"
 #include "cursor_handles_holder.h"
 #include "cursor_impl.h"
-
+//
+#include "marty_dc_impl_win32/multi_dc.h"
 
 namespace mxPiglets {
 
@@ -141,6 +142,87 @@ public:
         CHAIN_MSG_MAP(TParent);
 
     END_MSG_MAP()
+
+protected:
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdc
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdcex
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-releasedc
+    // GetDC/GetDCEx - ReleaseDC
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowdc
+    // GetWindowDC - ReleaseDC
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-beginpaint
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-endpaint
+    // BeginPaint - EndPaint
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdca
+    // https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-deletedc
+    // CreateDC - DeleteDC
+
+    // enum class HdcReleaseMode : std::uint32_t
+    // {
+    //     invalid     = (std::uint32_t)(-1),
+    //     unknown     = (std::uint32_t)(-1),
+    //     doNothing   = 0,
+    //     endPaint    = 1,
+    //     releaseDc   = 2,
+    //     deleteDc    = 3
+    //  
+    // }; // enum class HdcReleaseMode : std::uint32_t
+
+    void configureCanvas(std::shared_ptr<mxPiglets::ICanvas> pCanvas) const
+    {
+        pCanvas->setStringEncoding("UTF-8");
+        pCanvas->setBkMode( marty_draw_context::BkMode::transparent );
+        pCanvas->setSmoothingMode(marty_draw_context::SmoothingMode::antiAlias); // highSpeed highQuality antiAlias defMode none
+    }
+
+    virtual std::shared_ptr<mxPiglets::ICanvas> getCanvas() const override
+    {
+        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+            auto pdc = std::make_shared<GdiPlusDrawContext>(::GetDC(getHwnd()), marty_draw_context::HdcReleaseMode::releaseDc, getHwnd());
+        #else
+            auto pdc = std::make_shared<GdiDrawContext>    (::GetDC(getHwnd()), marty_draw_context::HdcReleaseMode::releaseDc, getHwnd());
+        #endif
+
+        configureCanvas(pdc);
+
+        return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
+    }
+
+    // тут мы сохраняем HDC, котоый был передан в DoPaint
+    mutable HDC hdcSaved = 0;
+
+    virtual std::shared_ptr<mxPiglets::ICanvas> getCanvasForPaintEvent() const override
+    {
+        if (hdcSaved==0)
+        {
+            return std::shared_ptr<mxPiglets::ICanvas>();
+        }
+
+        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+            auto pdc = std::make_shared<GdiPlusDrawContext>(hdcSaved, marty_draw_context::HdcReleaseMode::doNothing, getHwnd());
+        #else
+            auto pdc = std::make_shared<GdiDrawContext>    (hdcSaved, marty_draw_context::HdcReleaseMode::doNothing, getHwnd());
+        #endif
+
+        configureCanvas(pdc);
+
+        return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
+    }
+
+
+public:
+
+    void DoPaint(CDCHandle dc)
+    {
+        hdcSaved = dc;
+        onWindowPaintEvent();
+        hdcSaved = 0;
+    }
+
 
 protected:
 

@@ -246,51 +246,50 @@ public:
         return 0;
     }
 
-    void DoPaint(CDCHandle dc)
+
+    virtual bool selectCachedBackground    (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
     {
-        using umba::lout;
-        using namespace umba::omanip;
+        MARTY_ARG_USED(pCanvas);
+        return false;
+    } 
 
-        #ifdef TEST_DC_USE_GDIPLUS
-        GdiPlusDrawContext idc = dc;
-        #else
-        GdiDrawContext     idc = dc;
-        #endif
-
-        //auto scale = 1.4;
-        //auto scale = 8;
-        auto scale = 6;
-        //idc.setScale(DrawScale(30,30));
-        //idc.setScale(DrawScale(10,10));
-
-        IDrawContext *pDc = &idc;
-
-        pDc->setOffset(DrawScale(1.4,1.4));
-        pDc->setScale(DrawScale(scale,scale));
-        pDc->setPenScale(scale);
-
-        auto startTick = umba::time_service::getCurTimeMs();
-
-        auto offsetDc = marty_draw_context::OffsetDc(pDc, marty_draw_context::DrawCoord{10,10});
-        IDrawContext *pOffsetDc = &offsetDc;
-
-        //DoPaintImpl(pDc);
-        DoPaintImpl(pOffsetDc);
-
-        auto endTick = umba::time_service::getCurTimeMs();
-
-        lout << "OnPaint times: " << (endTick-startTick) << "\n";
-
+    virtual void cacheSceneBackground      (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
     }
 
-    void DoPaintImpl( marty_draw_context::IDrawContext *pDc )
+    virtual void drawSceneBackground       (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
     {
-        using umba::lout;
-        using namespace umba::omanip;
-
-        MARTY_ARG_USED(pDc);
-
+        MARTY_ARG_USED(pCanvas);
     }
+
+    virtual void drawSceneAnimation        (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
+    }
+
+    virtual void drawSceneControls         (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
+    }
+
+    virtual void drawSceneControlsAnimation(std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
+    }
+
+    virtual void drawDragItems             (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
+    }
+
+    virtual void drawMouseState            (std::shared_ptr<mxPiglets::ICanvas> pCanvas) const override
+    {
+        MARTY_ARG_USED(pCanvas);
+    }
+
+
+
 
 };
 
