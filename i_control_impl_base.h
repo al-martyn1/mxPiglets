@@ -1,7 +1,8 @@
 #pragma once
 
 #include "i_control.h"
-
+//
+#include <memory>
 
 
 namespace mxPiglets {
@@ -12,26 +13,28 @@ struct IControlImplBase : public IControl
 
 protected:
 
-    IHostWindow*                 m_pHostWindow            = 0;
-    ControlStyleFlags            m_controlStyleFlags      = ControlStyleFlags::none;
-    mutable ControlStateFlags    m_controlStateFlags      = ControlStateFlags::none;
+    IHostWindow*                                m_pHostWindow            = 0;
+    ControlStyleFlags                           m_controlStyleFlags      = ControlStyleFlags::none;
+    mutable ControlStateFlags                   m_controlStateFlags      = ControlStateFlags::none;
 
-    String                       m_controlText;
-    EDialogResult                m_controlDialogResult    = EDialogResult::none;
+    String                                      m_controlText;
+    EDialogResult                               m_controlDialogResult    = EDialogResult::none;
 
-    String                       m_controlTypeString      ; //!< Строка с именем типа контрола
-    mutable ETokenType           m_controlTypeToken       = ETokenType::tokenTypeNone; //!< Кешированный токен типа контрола
+    String                                      m_controlTypeString      ; //!< Строка с именем типа контрола
+    mutable ETokenType                          m_controlTypeToken       = ETokenType::tokenTypeNone; //!< Кешированный токен типа контрола
 
-    String                       m_controlStyleString     ; //!< Строка с именем стиля контрола
-    mutable ETokenType           m_controlStyleToken      = ETokenType::tokenTypeNone; //!< Кешированный токен стиля контрола
+    String                                      m_controlStyleString     ; //!< Строка с именем стиля контрола
+    mutable ETokenType                          m_controlStyleToken      = ETokenType::tokenTypeNone; //!< Кешированный токен стиля контрола
 
-    String                       m_controlIdString        ; //!< Строка с идентификатором контрола
-    mutable ETokenType           m_controlIdToken         = ETokenType::tokenTypeNone; //!< Кешированный токен идентификатор контрола
+    String                                      m_controlIdString        ; //!< Строка с идентификатором контрола
+    mutable ETokenType                          m_controlIdToken         = ETokenType::tokenTypeNone; //!< Кешированный токен идентификатор контрола
 
-    taborder_t                   m_controlTabOrder        = tabOrderInvalid;
+    taborder_t                                  m_controlTabOrder        = tabOrderInvalid;
 
-    Point                        m_position               = {0,0};
-    Size                         m_size                   = {0,0};
+    Point                                       m_position               = {0,0};
+    Size                                        m_size                   = {0,0};
+
+    std::vector< std::shared_ptr<IControl> >    m_childs;
 
 
 public:
