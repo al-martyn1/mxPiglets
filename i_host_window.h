@@ -54,7 +54,8 @@ protected:
 
     virtual void onWindowPaintEvent() //!< Вызывается в обработчике WM_PAINT (DoPaint WTL)
     {
-        auto pCanvas = getCanvasForPaintEvent();
+        auto pScreenCanvas = getCanvasForPaintEvent();
+        auto pCanvas = createOffscreenCanvas(pScreenCanvas);
         prepareCanvasScaleOffset  (pCanvas);
 
         drawSceneBackground       (pCanvas);
@@ -65,6 +66,8 @@ protected:
         drawSceneControlsAnimation(pCanvas);
         drawDragItems             (pCanvas);
         drawMouseState            (pCanvas);
+
+        copyOffsceenToScreenCanvas(pCanvas, pScreenCanvas); // from -> to
     }
 
     virtual taborder_t getAutoTabOrderIncrement() const = 0;
@@ -75,6 +78,12 @@ public:
     virtual std::shared_ptr<ICanvas> getCanvas() const = 0; //!< Возвращает канвас для рисования вне onWindowPaintEvent
     virtual std::shared_ptr<ICanvas> getCanvasForPaintEvent() const = 0; //!< Возвращает канвас для рисования в обработчике onWindowPaintEvent
     virtual void prepareCanvasScaleOffset(std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); }; //!< Настройка канваса, переопределяет пользователь
+
+    // Поддержка дабл буферинга
+    //! Создаёт "теневой" канвас для оффскрин отрисовки, чтобы отображение не сильно мерцало. По умолчанию - ничего не делает
+    virtual std::shared_ptr<ICanvas> createOffscreenCanvas(std::shared_ptr<ICanvas> pCanvas) const { return pCanvas; }
+    //! Копирует содержимое теневого канвас в экранный. По умолчанию - ничего не делает. Повторный вызов данного метода с теми же объектами недопустим - содержимое pCanvasCopyFrom разрушается.
+    virtual void                     copyOffsceenToScreenCanvas(std::shared_ptr<ICanvas> pCanvasCopyFrom, std::shared_ptr<ICanvas> pCanvasCopyTo) const { MARTY_ARG_USED(pCanvasCopyFrom); MARTY_ARG_USED(pCanvasCopyTo); }
 
     virtual bool selectCachedBackground    (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); return false; } //!< Устанавливает в канвасе кешированный background, возвращает false, если background не был установлен, и требуется перерисовка
     virtual void cacheSceneBackground      (std::shared_ptr<ICanvas> pCanvas) const { MARTY_ARG_USED(pCanvas); } //!< Кеширование background'а сцены
@@ -87,7 +96,8 @@ public:
 
     virtual void drawScene() //!< Отрисовка сцены по 
     {
-        auto pCanvas = getCanvas();
+        auto pScreenCanvas = getCanvas();
+        auto pCanvas = createOffscreenCanvas(pScreenCanvas);
         prepareCanvasScaleOffset  (pCanvas);
 
         if (!selectCachedBackground(pCanvas))
@@ -101,6 +111,8 @@ public:
         drawSceneControlsAnimation(pCanvas);
         drawDragItems             (pCanvas);
         drawMouseState            (pCanvas);
+
+        copyOffsceenToScreenCanvas(pCanvas, pScreenCanvas); // from -> to
     }
 
     virtual WindowTimer createTimer(timeout_t timeoutMs, bool bRunning = true) const = 0;

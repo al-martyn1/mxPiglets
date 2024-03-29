@@ -51,6 +51,8 @@ class HostWindowImpl : public TParent
 
     std::shared_ptr<ITokenDictionary>         m_pTokenDictionary;
     
+    mutable HDC                               m_hdcOnPaintSaved = 0; //!< тут мы сохраняем HDC, котоый был передан в DoPaint
+
 
 
 public:
@@ -172,6 +174,7 @@ protected:
     //  
     // }; // enum class HdcReleaseMode : std::uint32_t
 
+
     void configureCanvas(std::shared_ptr<mxPiglets::ICanvas> pCanvas) const
     {
         pCanvas->setStringEncoding("UTF-8");
@@ -179,48 +182,249 @@ protected:
         pCanvas->setSmoothingMode(marty_draw_context::SmoothingMode::antiAlias); // highSpeed highQuality antiAlias defMode none
     }
 
-    virtual std::shared_ptr<mxPiglets::ICanvas> getCanvas() const override
+
+    std::shared_ptr<mxPiglets::ICanvas> createCanvasImpl(bool useHdcSaved) const
     {
-        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
-            auto pdc = std::make_shared<GdiPlusDrawContext>(::GetDC(getHwnd()), marty_draw_context::HdcReleaseMode::releaseDc, getHwnd());
+        #if !defined(MARTY_DRAW_CONTEXT_NO_MULTIDC)
+
+            auto pdc = marty_draw_context::makeSharedMultiDrawContextGdi( useHdcSaved ? m_hdcOnPaintSaved : ::GetDC(getHwnd())
+                                                                        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+                                                                        , false // not prefferGdiPlus
+                                                                        #else
+                                                                        , true // prefferGdiPlus
+                                                                        #endif
+                                                                        , useHdcSaved ? marty_draw_context::HdcReleaseMode::doNothing /* endPaint */ : marty_draw_context::HdcReleaseMode::releaseDc
+                                                                        , getHwnd()
+                                                                        );
+            configureCanvas(pdc);
+            return pdc;
+
         #else
-            auto pdc = std::make_shared<GdiDrawContext>    (::GetDC(getHwnd()), marty_draw_context::HdcReleaseMode::releaseDc, getHwnd());
+
+            #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+                auto pdc = std::make_shared<GdiPlusDrawContext>( useHdcSaved ? m_hdcOnPaintSaved : ::GetDC(getHwnd())
+                                                               , useHdcSaved ? marty_draw_context::HdcReleaseMode::doNothing /* endPaint */ : marty_draw_context::HdcReleaseMode::releaseDc
+                                                               , getHwnd()
+                                                               );
+            #else
+                auto pdc = std::make_shared<GdiDrawContext>    ( useHdcSaved ? m_hdcOnPaintSaved : ::GetDC(getHwnd())
+                                                               , useHdcSaved ? marty_draw_context::HdcReleaseMode::doNothing /* endPaint */ : marty_draw_context::HdcReleaseMode::releaseDc
+                                                               , getHwnd()
+                                                               );
+            #endif
+
+            configureCanvas(pdc);
+            return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
+
         #endif
-
-        configureCanvas(pdc);
-
-        return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
     }
 
-    // тут мы сохраняем HDC, котоый был передан в DoPaint
-    mutable HDC hdcSaved = 0;
+    std::shared_ptr<mxPiglets::ICanvas> createCanvasDeleteDcImpl(HDC hdc) const
+    {
+        #if !defined(MARTY_DRAW_CONTEXT_NO_MULTIDC)
+
+            auto pdc = marty_draw_context::makeSharedMultiDrawContextGdi( hdc
+                                                                        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+                                                                        , false // not prefferGdiPlus
+                                                                        #else
+                                                                        , true // prefferGdiPlus
+                                                                        #endif
+                                                                        , marty_draw_context::HdcReleaseMode::deleteDc
+                                                                        , getHwnd()
+                                                                        );
+            configureCanvas(pdc);
+            return pdc;
+
+        #else
+
+            #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
+                auto pdc = std::make_shared<GdiPlusDrawContext>( useHdcSaved ? hdc : ::GetDC(getHwnd())
+                                                               , marty_draw_context::HdcReleaseMode::deleteDc
+                                                               , getHwnd()
+                                                               );
+            #else
+                auto pdc = std::make_shared<GdiDrawContext>    ( useHdcSaved ? hdc : ::GetDC(getHwnd())
+                                                               , marty_draw_context::HdcReleaseMode::deleteDc
+                                                               , getHwnd()
+                                                               );
+            #endif
+
+            configureCanvas(pdc);
+            return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
+
+        #endif
+    }
+
+    virtual std::shared_ptr<mxPiglets::ICanvas> getCanvas() const override
+    {
+        return createCanvasImpl(false /* not useHdcSaved */ );
+    }
+
 
     virtual std::shared_ptr<mxPiglets::ICanvas> getCanvasForPaintEvent() const override
     {
-        if (hdcSaved==0)
+        if (m_hdcOnPaintSaved==0)
         {
             return std::shared_ptr<mxPiglets::ICanvas>();
         }
 
-        #if !defined(MARTY_DRAW_CONTEXT_NO_GDIPLUS)
-            auto pdc = std::make_shared<GdiPlusDrawContext>(hdcSaved, marty_draw_context::HdcReleaseMode::doNothing, getHwnd());
-        #else
-            auto pdc = std::make_shared<GdiDrawContext>    (hdcSaved, marty_draw_context::HdcReleaseMode::doNothing, getHwnd());
-        #endif
-
-        configureCanvas(pdc);
-
-        return std::static_pointer_cast<mxPiglets::ICanvas>(pdc);
+        return createCanvasImpl(true /* useHdcSaved */ );
     }
+
+    CPoint getClientSizePoint() const
+    {
+        RECT clientRect{0,0};
+        ::GetClientRect(getHwnd(), &clientRect);
+
+        auto cx = clientRect.right  - clientRect.left; // + 1;
+        auto cy = clientRect.bottom - clientRect.top ; // + 1;
+
+        return CPoint(cx,cy);
+    }
+
+
+    marty_draw_context::IHdc* getIHdcFromCanvas(ICanvas *pCanvas) const
+    {
+        marty_draw_context::IHdc *pIHdc = 0;
+
+        // GdiDrawContext
+        // GdiPlusDrawContext
+        // MultiDrawContextGdi
+
+        if (!pIHdc && dynamic_cast<marty_draw_context::GdiDrawContext*>(pCanvas))
+        {
+            auto pImplBase = dynamic_cast<marty_draw_context::GdiDrawContext*>(pCanvas);
+            pIHdc = dynamic_cast<marty_draw_context::IHdc*>(pImplBase);
+        }
+
+        if (!pIHdc && dynamic_cast<marty_draw_context::GdiPlusDrawContext*>(pCanvas))
+        {
+            auto pImplBase = dynamic_cast<marty_draw_context::GdiPlusDrawContext*>(pCanvas);
+            pIHdc = dynamic_cast<marty_draw_context::IHdc*>(pImplBase);
+        }
+
+        if (!pIHdc && dynamic_cast<marty_draw_context::MultiDrawContextGdi*>(pCanvas))
+        {
+            auto pImplBase = dynamic_cast<marty_draw_context::MultiDrawContextGdi*>(pCanvas);
+            pIHdc = dynamic_cast<marty_draw_context::IHdc*>(pImplBase);
+        }
+
+        return pIHdc;
+    }
+
+    //! Создаёт "теневой" канвас для оффскрин отрисовки, чтобы отображение не сильно мерцало.
+    virtual std::shared_ptr<ICanvas> createOffscreenCanvas(std::shared_ptr<ICanvas> pCanvas) const override
+    {
+        auto pRawCanvas = pCanvas.get();
+        if (!pRawCanvas)
+        {
+            return pCanvas;
+        }
+
+        marty_draw_context::IHdc *pIHdc = getIHdcFromCanvas(pRawCanvas);
+        if (pIHdc==0)
+        {
+            return pCanvas;
+        }
+
+        HDC hScreenDc = pIHdc->getHdc();
+        if (hScreenDc==0)
+        {
+            return pCanvas;
+        }
+
+        CPoint clientSize = getClientSizePoint();
+
+        HDC hMemDc = ::CreateCompatibleDC(hScreenDc);
+        if (hMemDc==0)
+        {
+            return pCanvas;
+        }
+
+        HBITMAP hMemBmp    = ::CreateCompatibleBitmap(hScreenDc, clientSize.x, clientSize.y );
+        HBITMAP hOldMemBmp = (HBITMAP)::SelectObject(hMemDc, (HGDIOBJ)hMemBmp);
+
+        RECT clRect;
+        clRect.left   = 0;
+        clRect.top    = 0;
+        clRect.right  = clientSize.x;
+        clRect.bottom = clientSize.y;
+        ::FillRect(hMemDc, &clRect, (HBRUSH)COLOR_WINDOW);
+
+        pIHdc->setHbmpDelete(hOldMemBmp);
+    // virtual HBITMAP getHbmpDelete() const = 0;
+    // virtual void    setHbmpDelete(HBITMAP hbmp) const = 0;
+
+        auto pSharedOffscreenCanvas = createCanvasDeleteDcImpl(hMemDc);
+        return pSharedOffscreenCanvas;
+    }
+
+    //! Копирует содержимое теневого канвас в экранный. По умолчанию - ничего не делает
+    virtual void copyOffsceenToScreenCanvas(std::shared_ptr<ICanvas> pCanvasCopyFrom, std::shared_ptr<ICanvas> pCanvasCopyTo) const override
+    {
+        ICanvas *pRawCanvasCopyFrom = pCanvasCopyFrom.get();
+        ICanvas *pRawCanvasCopyTo   = pCanvasCopyTo.get();
+
+        if (!pRawCanvasCopyFrom || !pRawCanvasCopyTo || pRawCanvasCopyFrom==pRawCanvasCopyTo)
+        {
+            return;
+        }
+
+        marty_draw_context::IHdc *pIHdcFrom = getIHdcFromCanvas(pRawCanvasCopyFrom);
+        marty_draw_context::IHdc *pIHdcTo   = getIHdcFromCanvas(pRawCanvasCopyTo);
+        if (!pIHdcFrom || !pIHdcTo)
+        {
+            return;
+        }
+
+        HDC hdcFrom = pIHdcFrom->getHdc();
+        HDC hdcTo   = pIHdcTo  ->getHdc();
+        if (!hdcFrom || !hdcTo)
+        {
+            return;
+        }
+
+        CPoint clientSize = getClientSizePoint();
+
+        ::BitBlt( hdcTo       // A handle to the destination device context.
+                , 0, 0           //dstX, dstY   // The x/y-coordinates, in logical units, of the upper-left corner of the destination rectangle.
+                , clientSize.x, clientSize.y         // The width/height, in logical units, of the source and destination rectangles.
+                , hdcFrom    // hdcCopyFrom  // A handle to the source device context.
+                , 0, 0           // The x/y-coordinate, in logical units, of the upper-left corner of the source rectangle.
+                , SRCCOPY        // A raster-operation code - Copies the source rectangle directly to the destination rectangle.
+                );
+
+        // Исходный HBITMAP разрушается
+        HBITMAP hFromSavedBitmap = pIHdcFrom->getHbmpDelete(); // Получаем тут сохранённый hbmp
+        if (hFromSavedBitmap!=0) // не нулевой
+        {
+            HBITMAP hBmpDelete = (HBITMAP)::SelectObject(hdcFrom, (HGDIOBJ)hFromSavedBitmap); // восстановили исходный hbmp, который был изначально в HDC
+            ::DeleteObject((HGDIOBJ)hBmpDelete); // Удаляем битмап, который был использован, как поверхность для рисования
+            pIHdcFrom->setHbmpDelete(0); // не надо ничего удалять
+        }
+
+    }
+
+    //marty_draw_context::IHdc
+
+    // //! Копирует содержимое теневого канвас в экранный. По умолчанию - ничего не делает
+    // virtual void copyOffsceenToScreenCanvas(std::shared_ptr<ICanvas> pCanvasCopyFrom, std::shared_ptr<ICanvas> pCanvasCopyTo) const 
+    // {
+    //     // Просто ничего не делаем
+    //     MARTY_ARG_USED(pCanvasCopyFrom);
+    //     MARTY_ARG_USED(pCanvasCopyTo);
+    // }
+    //  
+
 
 
 public:
 
     void DoPaint(CDCHandle dc)
     {
-        hdcSaved = dc;
+        m_hdcOnPaintSaved = dc;
         onWindowPaintEvent();
-        hdcSaved = 0;
+        m_hdcOnPaintSaved = 0;
     }
 
 
