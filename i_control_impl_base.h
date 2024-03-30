@@ -140,7 +140,9 @@ public:
 
     virtual taborder_t setControlTabOrder(taborder_t newTabOrder) override
     {
-        return std::exchange(m_controlTabOrder, newTabOrder);
+        auto res = std::exchange(m_controlTabOrder, newTabOrder);
+        // 
+        return res;
     }
     
 
@@ -482,7 +484,10 @@ public:
     //! Установка всех флагов (assign). Возвращает старое значение флагов
     virtual ControlStateFlags setControlStateFlags(ControlStateFlags flags) override
     {
-        return std::exchange(m_controlStateFlags,flags);
+        auto nonResetableFlagsValue = m_controlStateFlags & s_controlStyleNonResetableFlags;
+        auto res = std::exchange(m_controlStateFlags,flags);
+        m_controlStateFlags |= nonResetableFlagsValue;
+        return res;
     }
 
     //------------------------------
@@ -503,9 +508,11 @@ public:
     //! Сначала очищаются resetFlags-флаги (and), потом устанавливаются setFlags-флаги (or). Возвращает старое значение флагов
     virtual ControlStateFlags setResetControlStateFlags(ControlStateFlags setFlags, ControlStateFlags resetFlags) override
     {
+        auto nonResetableFlagsValue = m_controlStateFlags & s_controlStyleNonResetableFlags;
         ControlStateFlags res = m_controlStateFlags;
         m_controlStateFlags &= ~resetFlags;
         m_controlStateFlags |= setFlags;
+        m_controlStateFlags |= nonResetableFlagsValue;
         return res;
     }
 
