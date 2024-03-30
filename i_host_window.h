@@ -8,6 +8,7 @@
 #include "window_timer.h"
 #include "i_token_dictionary.h"
 #include "token_dictionary.h"
+#include "i_control_painter_factory.h"
 //
 #include "marty_vk/VkCode.h"
 
@@ -121,6 +122,8 @@ public:
 
     virtual TokenDictionary getTokenDictionary() const = 0;
     virtual TokenDictionary setTokenDictionary(TokenDictionary dict) = 0;
+
+    //virtual addControl
 
     //! Возвращает токен по строке, при необходимости добавляя
     virtual ETokenType getTokenForString(const String &name) const = 0;
