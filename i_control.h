@@ -4,6 +4,7 @@
 //
 #include "i_host_window.h"
 //
+#include "i_control_painter.h"
 
 namespace mxPiglets {
 
@@ -26,6 +27,15 @@ struct IControl : public NonCopyableObject
     // 3) Не обязательно прокидывать эти методы в скрипты, а если прокинули,
     //    и кто-то сохранил и хранит/использует отдельно от обработчиков событий и прочего временного,
     //    то он сам себе ССЗБ
+
+
+    // Флаги, единожды установленные, после этого не могут быть сброшены
+    static const s_controlStyleNonResetableFlags = ControlStyleFlags::controlContainer  // Acts as control container, not a single (possible compaund) control
+                                                 | ControlStyleFlags::groupStart        // Starts the control group
+                                                 | ControlStyleFlags::tabStop           // Allow the control to be in tab navigation list
+                                                 | ControlStyleFlags::focusLess         // Control can't own the input focus
+                                                 ;
+
 
     virtual IHostWindow*       getHostWindow() = 0;
     virtual const IHostWindow* getHostWindow() const = 0;
